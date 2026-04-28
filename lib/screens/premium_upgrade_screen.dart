@@ -73,7 +73,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
                 style: TextStyle(color: AppColors.primary),
               ),
               content: const Text(
-                'Your account has been upgraded to Premium. Enjoy 2x mining speed!',
+                'Your account has been upgraded to Premium. Enjoy 10x mining speed!',
               ),
               actions: [
                 TextButton(
@@ -194,7 +194,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
           ),
           const SizedBox(height: 16),
           const Text(
-            '• 2x Mining Speed\n• Priority Withdrawals\n• Exclusive Badge',
+            '• 10x Mining Speed\n• Priority Withdrawals\n• Exclusive Badge',
             style: TextStyle(color: Colors.white70),
             textAlign: TextAlign.center,
           ),
@@ -268,7 +268,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Send exactly \$5 USDT to the address below:',
+            'Send exactly \$10 USDT to the address below:',
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),
