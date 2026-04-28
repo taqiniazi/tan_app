@@ -296,6 +296,55 @@ class ApiService {
     }
   }
 
+  Future<Map<String, dynamic>> getAdminStats() async {
+    try {
+      final response = await _dio.get('/admin/analytics');
+      final withdrawalsResponse = await _dio.get('/admin/withdrawals');
+      
+      final stats = response.data;
+      if (withdrawalsResponse.data is List) {
+        stats['pendingWithdrawals'] = (withdrawalsResponse.data as List).length;
+      } else {
+        stats['pendingWithdrawals'] = 0;
+      }
+      
+      return stats;
+    } catch (e) {
+      throw 'Failed to fetch admin stats';
+    }
+  }
+
+  Future<List<WithdrawalModel>> getPendingWithdrawals() async {
+    try {
+      final response = await _dio.get('/admin/withdrawals');
+      final List data = response.data;
+      return data.map((json) => WithdrawalModel.fromJson(json)).toList();
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<void> approveWithdrawal(String id, String txHash) async {
+    try {
+      await _dio.post('/admin/withdraw/approve', data: {
+        'withdrawalId': id,
+        'txHash': txHash,
+      });
+    } on DioException catch (e) {
+      throw e.message ?? 'Failed to approve withdrawal';
+    }
+  }
+
+  Future<void> rejectWithdrawal(String id) async {
+    try {
+      await _dio.post('/admin/withdraw/reject', data: {
+        'withdrawalId': id,
+      });
+    } on DioException catch (e) {
+      throw e.message ?? 'Failed to reject withdrawal';
+    }
+  }
+
   Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
     await _storage.delete(key: _lastActivityKey);
