@@ -132,14 +132,44 @@ class MiningScreen extends ConsumerWidget {
           ],
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: state.isMining ? null : () => ref.read(miningProvider.notifier).startMining(),
+            onPressed: state.isMining 
+                ? null 
+                : () async {
+                    try {
+                      if (state.canClaim) {
+                        await ref.read(miningProvider.notifier).claimReward();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Rewards claimed successfully!')),
+                          );
+                        }
+                      } else {
+                        await ref.read(miningProvider.notifier).startMining();
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Mining session started!')),
+                          );
+                        }
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent),
+                        );
+                      }
+                    }
+                  },
             style: ElevatedButton.styleFrom(
-              backgroundColor: state.isMining ? Colors.grey.withValues(alpha: 0.2) : AppColors.primary,
+              backgroundColor: state.isMining 
+                  ? Colors.grey.withValues(alpha: 0.2) 
+                  : (state.canClaim ? AppColors.accent : AppColors.primary),
               disabledBackgroundColor: Colors.grey.withValues(alpha: 0.1),
               minimumSize: const Size(double.infinity, 60),
             ),
             child: Text(
-              state.isMining ? 'MINING IN PROGRESS' : 'START MINING',
+              state.isMining 
+                  ? 'MINING IN PROGRESS' 
+                  : (state.canClaim ? 'CLAIM REWARDS' : 'START MINING'),
               style: TextStyle(
                 color: state.isMining ? AppColors.textSecondary : Colors.black,
                 fontWeight: FontWeight.bold,

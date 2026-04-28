@@ -8,12 +8,14 @@ class MiningState {
   final DateTime? lastActivation;
   final Duration remainingTime;
   final double miningRate;
+  final bool canClaim;
 
   MiningState({
     this.isMining = false,
     this.lastActivation,
     this.remainingTime = Duration.zero,
-    this.miningRate = 0.01,
+    this.miningRate = 1.0,
+    this.canClaim = false,
   });
 
   MiningState copyWith({
@@ -21,12 +23,14 @@ class MiningState {
     DateTime? lastActivation,
     Duration? remainingTime,
     double? miningRate,
+    bool? canClaim,
   }) {
     return MiningState(
       isMining: isMining ?? this.isMining,
       lastActivation: lastActivation ?? this.lastActivation,
       remainingTime: remainingTime ?? this.remainingTime,
       miningRate: miningRate ?? this.miningRate,
+      canClaim: canClaim ?? this.canClaim,
     );
   }
 }
@@ -45,7 +49,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
       final status = await _apiService.getMiningStatus();
       final bool isMining = status['isMining'] ?? false;
       final String? startTimeStr = status['startTime'];
-      final double rate = (status['rate'] ?? 0.1).toDouble();
+      final double rate = (status['rate'] ?? 1.0).toDouble();
 
       if (isMining && startTimeStr != null) {
         final startTime = DateTime.parse(startTimeStr);
@@ -58,16 +62,28 @@ class MiningNotifier extends StateNotifier<MiningState> {
             lastActivation: startTime,
             remainingTime: _miningDuration - difference,
             miningRate: rate,
+            canClaim: false,
           );
           _startCountdown();
         } else {
-          state = state.copyWith(isMining: false, remainingTime: Duration.zero);
+          // Session expired but not claimed in backend
+          state = state.copyWith(
+            isMining: false, 
+            remainingTime: Duration.zero, 
+            miningRate: rate,
+            canClaim: true,
+          );
         }
       } else {
-        state = state.copyWith(isMining: false, remainingTime: Duration.zero, miningRate: rate);
+        state = state.copyWith(
+          isMining: false, 
+          remainingTime: Duration.zero, 
+          miningRate: rate,
+          canClaim: false,
+        );
       }
     } catch (e) {
-      // Fallback or silent error
+      // Keep existing state or handle error
     }
   }
 
@@ -84,7 +100,11 @@ class MiningNotifier extends StateNotifier<MiningState> {
       final remaining = _miningDuration - difference;
 
       if (remaining.isNegative) {
-        state = state.copyWith(isMining: false, remainingTime: Duration.zero);
+        state = state.copyWith(
+          isMining: false, 
+          remainingTime: Duration.zero,
+          canClaim: true,
+        );
         timer.cancel();
       } else {
         state = state.copyWith(remainingTime: remaining);
@@ -93,10 +113,19 @@ class MiningNotifier extends StateNotifier<MiningState> {
   }
 
   Future<void> startMining() async {
-    if (state.isMining) return;
+    if (state.isMining || state.canClaim) return;
     
     try {
       await _apiService.startMining();
+      await syncWithBackend();
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> claimReward() async {
+    try {
+      await _apiService.claimReward();
       await syncWithBackend();
     } catch (e) {
       rethrow;
