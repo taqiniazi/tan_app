@@ -292,14 +292,18 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           const SizedBox(height: 16),
           Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
           const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
-              const SizedBox(width: 4),
-              Text(unit, style: const TextStyle(fontSize: 10, color: AppColors.textSecondary)),
-            ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                const SizedBox(width: 4),
+                Text(unit, style: const TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+              ],
+            ),
           ),
         ],
       ),
