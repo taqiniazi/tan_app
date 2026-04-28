@@ -12,7 +12,7 @@ class MiningState {
     this.isMining = false,
     this.lastActivation,
     this.remainingTime = Duration.zero,
-    this.miningRate = 0.1,
+    this.miningRate = 0.01,
   });
 
   MiningState copyWith({
@@ -42,7 +42,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
   Future<void> _loadState() async {
     final prefs = await SharedPreferences.getInstance();
     final lastTimeStr = prefs.getString(_lastActivationKey);
-    
+
     if (lastTimeStr != null) {
       final lastTime = DateTime.parse(lastTimeStr);
       final now = DateTime.now();
@@ -102,6 +102,8 @@ class MiningNotifier extends StateNotifier<MiningState> {
   }
 }
 
-final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((ref) {
+final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((
+  ref,
+) {
   return MiningNotifier();
 });
