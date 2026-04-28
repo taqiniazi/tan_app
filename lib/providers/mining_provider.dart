@@ -14,7 +14,7 @@ class MiningState {
     this.isMining = false,
     this.lastActivation,
     this.remainingTime = Duration.zero,
-    this.miningRate = 1.0,
+    this.miningRate = 0.01,
     this.canClaim = false,
   });
 
@@ -49,7 +49,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
       final status = await _apiService.getMiningStatus();
       final bool isMining = status['isMining'] ?? false;
       final String? startTimeStr = status['startTime'];
-      final double rate = (status['rate'] ?? 1.0).toDouble();
+      final double rate = (status['rate'] ?? 0.01).toDouble();
 
       if (isMining && startTimeStr != null) {
         final startTime = DateTime.parse(startTimeStr);

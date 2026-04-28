@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tan_network/providers/mining_provider.dart';
+import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/mining_progress_bar.dart';
 import 'package:tan_network/widgets/logout_button.dart';
@@ -12,6 +13,8 @@ class MiningScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final miningState = ref.watch(miningProvider);
+    final user = ref.watch(authProvider).user;
+    final bool isBanned = user?.isFlagged ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +37,7 @@ class MiningScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 32),
             ],
-            _buildActionCard(context, miningState, ref),
+            if (isBanned) _buildBannedMessage() else _buildActionCard(context, miningState, ref),
             const SizedBox(height: 40),
           ],
         ),
@@ -176,6 +179,44 @@ class MiningScreen extends ConsumerWidget {
                 fontSize: 16,
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBannedMessage() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.gavel_rounded, color: AppColors.error, size: 48),
+          SizedBox(height: 16),
+          Text(
+            'ACCOUNT BANNED',
+            style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          SizedBox(height: 12),
+          Text(
+            'Your account has been flagged for suspicious activity and is currently restricted.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'For more information, please email us with your username at:',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          ),
+          Text(
+            'support@tannetwork.online',
+            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
           ),
         ],
       ),

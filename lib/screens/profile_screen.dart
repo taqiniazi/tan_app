@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
@@ -154,6 +155,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   _buildReferralCard(context, user),
                   const SizedBox(height: 24),
                   _buildSecuritySection(),
+                  const SizedBox(height: 24),
+                  _buildSupportSection(context),
                   const SizedBox(height: 48),
                   _buildLogoutButton(context, ref),
                 ],
@@ -386,6 +389,38 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
+  Widget _buildSupportSection(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Support', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          const SizedBox(height: 20),
+          ListTile(
+            onTap: () => Navigator.pushNamed(context, '/contact'),
+            contentPadding: EdgeInsets.zero,
+            leading: Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(Icons.contact_support_rounded, size: 20, color: AppColors.primary),
+            ),
+            title: const Text('Contact Us', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: const Text('Get help and platform information', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+            trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildReferralCard(BuildContext context, UserModel user) {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -426,9 +461,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 ),
                 IconButton(
                   onPressed: user.referralCode.isNotEmpty ? () {
-                    // Copy to clipboard logic
+                    final String shareMessage = "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.5tansolution.com\n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${user.referralCode.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
+                    
+                    Clipboard.setData(ClipboardData(text: shareMessage));
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Referral code copied!')),
+                      const SnackBar(content: Text('Sharing message copied to clipboard!')),
                     );
                   } : null,
                   icon: Icon(Icons.copy_rounded, color: user.referralCode.isNotEmpty ? Colors.white70 : Colors.white24, size: 20),

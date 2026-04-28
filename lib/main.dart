@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/screens/login_screen.dart';
 import 'package:tan_network/screens/splash_screen.dart';
 import 'package:tan_network/screens/main_layout.dart';
+import 'package:tan_network/screens/contact_us_screen.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/services/api_service.dart';
 import 'package:tan_network/services/notification_service.dart';
@@ -42,6 +43,7 @@ class TanNetworkApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginScreen(),
         '/home': (context) => const MainLayout(),
+        '/contact': (context) => const ContactUsScreen(),
       },
     );
   }

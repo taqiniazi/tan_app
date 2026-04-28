@@ -22,6 +22,7 @@ class HomeScreen extends ConsumerWidget {
     final user = ref.watch(authProvider).user;
     final activityAsync = ref.watch(activityProvider);
     final miningState = ref.watch(miningProvider);
+    final bool isBanned = user?.isFlagged ?? false;
 
     return Scaffold(
       appBar: AppBar(
@@ -49,36 +50,35 @@ class HomeScreen extends ConsumerWidget {
                 style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
               ),
             ),
-            const SizedBox(height: 24),
-            FadeSlideTransition(
-              duration: const Duration(milliseconds: 600),
-              child: BalanceCard(
-                balance: balance,
-                dailyProfit: (user?.miningRate ?? 0.0) * 24,
-                hashRate: (user?.miningRate ?? 0.0) * 10, // Example scale: 1 TAN/h = 10 MH/s
-                isPremium: user?.isPremium ?? false,
-                isMining: miningState.isMining,
+            if (isBanned) ...[
+              const SizedBox(height: 24),
+              _buildBannedMessage(),
+            ] else ...[
+              const SizedBox(height: 24),
+              FadeSlideTransition(
+                duration: const Duration(milliseconds: 600),
+                child: BalanceCard(
+                  balance: balance,
+                  dailyProfit: (user?.miningRate ?? 0.0) * 24,
+                  hashRate: (user?.miningRate ?? 0.0) * 10, // Example scale: 1 TAN/h = 10 MH/s
+                  isPremium: user?.isPremium ?? false,
+                  isMining: miningState.isMining,
+                ),
               ),
-            ),
-            const SizedBox(height: 24),
-            FadeSlideTransition(
-              duration: const Duration(milliseconds: 700),
-              child: _buildQuickActions(context),
-            ),
-            const SizedBox(height: 24),
-            FadeSlideTransition(
-              duration: const Duration(milliseconds: 800),
-              child: MiningStatusCard(
-                isMining: miningState.isMining,
-                hashRate: miningState.isMining ? (user?.miningRate ?? 1.0) : 0.0,
+              const SizedBox(height: 24),
+              FadeSlideTransition(
+                duration: const Duration(milliseconds: 700),
+                child: _buildQuickActions(context),
               ),
-            ),
-            const SizedBox(height: 24),
-            if (user?.isPremium == false)
-              const FadeSlideTransition(
-                duration: Duration(milliseconds: 900),
-                child: PremiumUpgradeBanner(),
+              const SizedBox(height: 24),
+              FadeSlideTransition(
+                duration: const Duration(milliseconds: 800),
+                child: MiningStatusCard(
+                  isMining: miningState.isMining,
+                  hashRate: miningState.isMining ? (user?.miningRate ?? 1.0) : 0.0,
+                ),
               ),
+            ],
             const SizedBox(height: 32),
             _buildSectionHeader('Recent Activity', ref),
             const SizedBox(height: 16),
@@ -291,6 +291,44 @@ class HomeScreen extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               fontSize: 16,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBannedMessage() {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: AppColors.error.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+      ),
+      child: const Column(
+        children: [
+          Icon(Icons.gavel_rounded, color: AppColors.error, size: 48),
+          SizedBox(height: 16),
+          Text(
+            'ACCOUNT BANNED',
+            style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 18),
+          ),
+          SizedBox(height: 12),
+          Text(
+            'Your account has been flagged for suspicious activity and is currently restricted.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textPrimary),
+          ),
+          SizedBox(height: 16),
+          Text(
+            'For more information, please email us with your username at:',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
+          ),
+          Text(
+            'support@tannetwork.online',
+            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
           ),
         ],
       ),

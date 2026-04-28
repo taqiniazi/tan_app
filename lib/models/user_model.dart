@@ -11,13 +11,14 @@ class UserModel {
   final String? profileImage;
   final double referralEarnings;
   final double totalEarnedFromMining;
+  final bool isFlagged;
 
   UserModel({
     required this.id,
     required this.name,
     required this.email,
     this.role = 'user',
-    this.miningRate = 1.0,
+    this.miningRate = 0.01,
     this.isPremium = false,
     this.referralCode = '',
     this.country,
@@ -25,6 +26,7 @@ class UserModel {
     this.profileImage,
     this.referralEarnings = 0.0,
     this.totalEarnedFromMining = 0.0,
+    this.isFlagged = false,
   });
 
   bool get isAdmin => role == 'admin';
@@ -35,7 +37,7 @@ class UserModel {
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'] ?? 'user',
-      miningRate: (json['miningRate'] ?? 1.0).toDouble(),
+      miningRate: (json['miningRate'] ?? 0.01).toDouble(),
       isPremium: json['isPremium'] ?? false,
       referralCode: json['referralCode'] ?? '',
       country: json['country'],
@@ -43,6 +45,7 @@ class UserModel {
       profileImage: json['profileImage'],
       referralEarnings: (json['referralEarnings'] ?? 0.0).toDouble(),
       totalEarnedFromMining: (json['totalEarnedFromMining'] ?? 0.0).toDouble(),
+      isFlagged: json['isFlagged'] ?? false,
     );
   }
 
@@ -60,6 +63,7 @@ class UserModel {
       'profileImage': profileImage,
       'referralEarnings': referralEarnings,
       'totalEarnedFromMining': totalEarnedFromMining,
+      'isFlagged': isFlagged,
     };
   }
 }
