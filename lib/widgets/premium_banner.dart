@@ -37,7 +37,7 @@ class PremiumUpgradeBanner extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Get 2x speed and zero fees with TAN Premium.',
+                  'Get 10x speed and zero fees with TAN Premium.',
                   style: TextStyle(
                     color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
@@ -51,7 +51,9 @@ class PremiumUpgradeBanner extends StatelessWidget {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const PremiumUpgradeScreen()),
+                MaterialPageRoute(
+                  builder: (context) => const PremiumUpgradeScreen(),
+                ),
               );
             },
             style: ElevatedButton.styleFrom(

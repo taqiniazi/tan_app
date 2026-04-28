@@ -68,10 +68,11 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 24),
-            const FadeSlideTransition(
-              duration: Duration(milliseconds: 900),
-              child: PremiumUpgradeBanner(),
-            ),
+            if (user?.isPremium == false)
+              const FadeSlideTransition(
+                duration: Duration(milliseconds: 900),
+                child: PremiumUpgradeBanner(),
+              ),
             const SizedBox(height: 32),
             _buildSectionHeader('Recent Activity', ref),
             const SizedBox(height: 16),
