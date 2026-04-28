@@ -45,7 +45,7 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
             Expanded(
               child: Column(
                 children: [
-                  _buildHeader(context, !isDesktop),
+                  _buildHeader(context, !isDesktop, menuItems[currentIndex]['label']),
                   Expanded(child: pages[currentIndex]),
                 ],
               ),
@@ -132,7 +132,7 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool showMenu) {
+  Widget _buildHeader(BuildContext context, bool showMenu, String title) {
     return Container(
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -148,21 +148,23 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
               onPressed: () => _scaffoldKey.currentState?.openDrawer(),
             ),
           if (showMenu) const SizedBox(width: 16),
-          const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Welcome Back',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
-              ),
-              Text(
-                'Admin Panel',
-                style: TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 16),
-              ),
-            ],
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Admin Panel',
+                  style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                ),
+                Text(
+                  title,
+                  style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.bold, fontSize: 20),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
           ),
-          const Spacer(),
           const CircleAvatar(
             radius: 20,
             backgroundColor: AppColors.primary,

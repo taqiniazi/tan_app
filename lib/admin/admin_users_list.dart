@@ -42,13 +42,12 @@ class _AdminUsersListState extends ConsumerState<AdminUsersList> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              const Text('Users Management', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
               ElevatedButton.icon(
                 onPressed: _fetchUsers,
                 icon: const Icon(Icons.refresh),
-                label: const Text('Refresh'),
+                label: const Text('Refresh List'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.black,
@@ -56,7 +55,7 @@ class _AdminUsersListState extends ConsumerState<AdminUsersList> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
@@ -89,7 +88,7 @@ class _AdminUsersListState extends ConsumerState<AdminUsersList> {
                                   const SizedBox(height: 4),
                                   Text(user.email, style: const TextStyle(color: Colors.white70)),
                                   const SizedBox(height: 4),
-                                  Text('Balance: \$${user.balance.toStringAsFixed(2)}', style: const TextStyle(color: AppColors.primary)),
+                                  Text('Mining Rate: ${user.miningRate}x', style: const TextStyle(color: AppColors.primary)),
                                 ],
                               ),
                               trailing: _statusChip(user.role == 'admin' ? 'Admin' : 'User'),
