@@ -7,7 +7,7 @@ import 'package:tan_network/widgets/mining_status_card.dart';
 import 'package:tan_network/widgets/premium_banner.dart';
 import 'package:tan_network/screens/withdrawal_history_screen.dart';
 import 'package:tan_network/widgets/animations.dart';
-import 'package:tan_network/providers/user_provider.dart';
+import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/providers/activity_provider.dart';
 import 'package:tan_network/providers/mining_provider.dart';
 import 'package:intl/intl.dart';
@@ -19,7 +19,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final balance = ref.watch(balanceProvider);
-    final user = ref.watch(userStateProvider);
+    final user = ref.watch(authProvider).user;
     final activityAsync = ref.watch(activityProvider);
     final miningState = ref.watch(miningProvider);
 

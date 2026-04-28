@@ -46,33 +46,13 @@ class MiningScreen extends ConsumerWidget {
     return Container(
       height: 250,
       width: 250,
+      alignment: Alignment.center,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: AppColors.primary.withValues(alpha: 0.05),
-        boxShadow: isMining
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  blurRadius: 50,
-                  spreadRadius: 10,
-                )
-              ]
-            : [],
       ),
       child: isMining
-          ? Lottie.network(
-              'https://lottie.host/813d10c2-7f97-4f67-88d4-5396556e8071/S0rGfP6X3g.json', // Stable network pulse animation
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Center(
-                  child: Icon(
-                    Icons.bolt_rounded,
-                    size: 80,
-                    color: AppColors.primary,
-                  ),
-                );
-              },
-            )
+          ? const _MiningPulseAnimation()
           : const Icon(
               Icons.sensors_off_rounded,
               size: 100,
@@ -177,5 +157,70 @@ class MiningScreen extends ConsumerWidget {
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
     return "${twoDigits(duration.inHours)}:$twoDigitMinutes:$twoDigitSeconds";
+  }
+}
+
+class _MiningPulseAnimation extends StatefulWidget {
+  const _MiningPulseAnimation();
+
+  @override
+  State<_MiningPulseAnimation> createState() => _MiningPulseAnimationState();
+}
+
+class _MiningPulseAnimationState extends State<_MiningPulseAnimation> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _glowAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+
+    _glowAnimation = Tween<double>(begin: 0.1, end: 0.6).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: _glowAnimation.value),
+                  blurRadius: 40 * _scaleAnimation.value,
+                  spreadRadius: 10 * _scaleAnimation.value,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.bolt_rounded,
+              size: 80,
+              color: AppColors.primary,
+            ),
+          ),
+        );
+      },
+    );
   }
 }

@@ -90,6 +90,8 @@ class _AdminUsersListState extends ConsumerState<AdminUsersList> {
                                   Text(user.email, style: const TextStyle(color: Colors.white70)),
                                   const SizedBox(height: 4),
                                   Text('Mining Rate: ${user.miningRate}x', style: const TextStyle(color: AppColors.primary)),
+                                  const SizedBox(height: 4),
+                                  Text('Referral Code: ${user.referralCode}', style: const TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
                                 ],
                               ),
                               trailing: _statusChip(user.role == 'admin' ? 'Admin' : 'User'),
