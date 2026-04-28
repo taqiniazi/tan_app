@@ -9,6 +9,8 @@ class UserModel {
   final String? country;
   final String? city;
   final String? profileImage;
+  final double referralEarnings;
+  final double totalEarnedFromMining;
 
   UserModel({
     required this.id,
@@ -21,6 +23,8 @@ class UserModel {
     this.country,
     this.city,
     this.profileImage,
+    this.referralEarnings = 0.0,
+    this.totalEarnedFromMining = 0.0,
   });
 
   bool get isAdmin => role == 'admin';
@@ -37,6 +41,8 @@ class UserModel {
       country: json['country'],
       city: json['city'],
       profileImage: json['profileImage'],
+      referralEarnings: (json['referralEarnings'] ?? 0.0).toDouble(),
+      totalEarnedFromMining: (json['totalEarnedFromMining'] ?? 0.0).toDouble(),
     );
   }
 
@@ -52,6 +58,8 @@ class UserModel {
       'country': country,
       'city': city,
       'profileImage': profileImage,
+      'referralEarnings': referralEarnings,
+      'totalEarnedFromMining': totalEarnedFromMining,
     };
   }
 }

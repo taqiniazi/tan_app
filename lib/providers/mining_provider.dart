@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tan_network/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MiningState {
@@ -31,31 +32,42 @@ class MiningState {
 }
 
 class MiningNotifier extends StateNotifier<MiningState> {
+  final ApiService _apiService;
   Timer? _timer;
-  static const String _lastActivationKey = 'last_mining_activation';
   static const Duration _miningDuration = Duration(hours: 24);
 
-  MiningNotifier() : super(MiningState()) {
-    _loadState();
+  MiningNotifier(this._apiService) : super(MiningState()) {
+    syncWithBackend();
   }
 
-  Future<void> _loadState() async {
-    final prefs = await SharedPreferences.getInstance();
-    final lastTimeStr = prefs.getString(_lastActivationKey);
+  Future<void> syncWithBackend() async {
+    try {
+      final status = await _apiService.getMiningStatus();
+      final bool isMining = status['isMining'] ?? false;
+      final String? startTimeStr = status['startTime'];
+      final double rate = (status['rate'] ?? 0.1).toDouble();
 
-    if (lastTimeStr != null) {
-      final lastTime = DateTime.parse(lastTimeStr);
-      final now = DateTime.now();
-      final difference = now.difference(lastTime);
+      if (isMining && startTimeStr != null) {
+        final startTime = DateTime.parse(startTimeStr);
+        final now = DateTime.now();
+        final difference = now.difference(startTime);
 
-      if (difference < _miningDuration) {
-        state = state.copyWith(
-          isMining: true,
-          lastActivation: lastTime,
-          remainingTime: _miningDuration - difference,
-        );
-        _startCountdown();
+        if (difference < _miningDuration) {
+          state = state.copyWith(
+            isMining: true,
+            lastActivation: startTime,
+            remainingTime: _miningDuration - difference,
+            miningRate: rate,
+          );
+          _startCountdown();
+        } else {
+          state = state.copyWith(isMining: false, remainingTime: Duration.zero);
+        }
+      } else {
+        state = state.copyWith(isMining: false, remainingTime: Duration.zero, miningRate: rate);
       }
+    } catch (e) {
+      // Fallback or silent error
     }
   }
 
@@ -82,17 +94,13 @@ class MiningNotifier extends StateNotifier<MiningState> {
 
   Future<void> startMining() async {
     if (state.isMining) return;
-
-    final now = DateTime.now();
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_lastActivationKey, now.toIso8601String());
-
-    state = state.copyWith(
-      isMining: true,
-      lastActivation: now,
-      remainingTime: _miningDuration,
-    );
-    _startCountdown();
+    
+    try {
+      await _apiService.startMining();
+      await syncWithBackend();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   @override
@@ -102,8 +110,6 @@ class MiningNotifier extends StateNotifier<MiningState> {
   }
 }
 
-final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((
-  ref,
-) {
-  return MiningNotifier();
+final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((ref) {
+  return MiningNotifier(ref.watch(apiServiceProvider));
 });

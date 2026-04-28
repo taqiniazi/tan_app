@@ -52,7 +52,13 @@ class HomeScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             FadeSlideTransition(
               duration: const Duration(milliseconds: 600),
-              child: BalanceCard(balance: balance),
+              child: BalanceCard(
+                balance: balance,
+                dailyProfit: (user?.miningRate ?? 0.0) * 24,
+                hashRate: (user?.miningRate ?? 0.0) * 10, // Example scale: 1 TAN/h = 10 MH/s
+                isPremium: user?.isPremium ?? false,
+                isMining: miningState.isMining,
+              ),
             ),
             const SizedBox(height: 24),
             FadeSlideTransition(
@@ -64,7 +70,7 @@ class HomeScreen extends ConsumerWidget {
               duration: const Duration(milliseconds: 800),
               child: MiningStatusCard(
                 isMining: miningState.isMining,
-                hashRate: miningState.isMining ? 48.2 : 0.0,
+                hashRate: miningState.isMining ? (user?.miningRate ?? 1.0) : 0.0,
               ),
             ),
             const SizedBox(height: 24),

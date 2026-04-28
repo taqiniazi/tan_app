@@ -271,7 +271,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _statItem('Status', user.isPremium ? 'Premium' : 'Standard', 'Account', Icons.verified_user_rounded, AppColors.accent),
+          child: _statItem('Referral Earnings', '${user.referralEarnings.toStringAsFixed(2)}', 'TAN', Icons.people_alt_rounded, AppColors.accent),
         ),
       ],
     );

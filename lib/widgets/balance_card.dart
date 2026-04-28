@@ -3,8 +3,19 @@ import 'package:tan_network/theme/app_theme.dart';
 
 class BalanceCard extends StatelessWidget {
   final double balance;
+  final double hashRate;
+  final double dailyProfit;
+  final bool isPremium;
+  final bool isMining;
 
-  const BalanceCard({super.key, required this.balance});
+  const BalanceCard({
+    super.key, 
+    required this.balance,
+    required this.hashRate,
+    required this.dailyProfit,
+    this.isPremium = false,
+    this.isMining = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +86,9 @@ class BalanceCard extends StatelessWidget {
           const SizedBox(height: 24),
           Row(
             children: [
-              _buildMiniStat('24h Profit', '+12.5%', AppColors.success),
+              _buildMiniStat('24h Profit', '+${dailyProfit.toStringAsFixed(2)}', AppColors.success),
               const SizedBox(width: 24),
-              _buildMiniStat('Hashrate', '48.2 MH/s', AppColors.accent),
+              _buildMiniStat('Hashrate', '${isMining ? hashRate.toStringAsFixed(1) : "0.0"} MH/s', AppColors.accent),
             ],
           ),
         ],
