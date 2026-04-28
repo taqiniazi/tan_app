@@ -412,17 +412,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  user.referralCode.toUpperCase(),
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 2, color: AppColors.primary),
+                  user.referralCode.isNotEmpty ? user.referralCode.toUpperCase() : 'NOT SET',
+                  style: TextStyle(
+                    fontSize: 20, 
+                    fontWeight: FontWeight.bold, 
+                    letterSpacing: 2, 
+                    color: user.referralCode.isNotEmpty ? AppColors.primary : Colors.grey,
+                  ),
                 ),
                 IconButton(
-                  onPressed: () {
+                  onPressed: user.referralCode.isNotEmpty ? () {
                     // Copy to clipboard logic
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Referral code copied!')),
                     );
-                  },
-                  icon: const Icon(Icons.copy_rounded, color: Colors.white70, size: 20),
+                  } : null,
+                  icon: Icon(Icons.copy_rounded, color: user.referralCode.isNotEmpty ? Colors.white70 : Colors.white24, size: 20),
                 ),
               ],
             ),
