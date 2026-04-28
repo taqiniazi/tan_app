@@ -84,6 +84,7 @@ class _AdminUsersListState extends ConsumerState<AdminUsersList> {
                               title: Text(user.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   const SizedBox(height: 4),
                                   Text(user.email, style: const TextStyle(color: Colors.white70)),

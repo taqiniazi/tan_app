@@ -4,6 +4,7 @@ import 'package:tan_network/admin/admin_dashboard.dart';
 import 'package:tan_network/admin/admin_users_list.dart';
 import 'package:tan_network/admin/admin_withdrawals_list.dart';
 import 'package:tan_network/theme/app_theme.dart';
+import 'package:tan_network/providers/auth_provider.dart';
 
 final adminPageProvider = StateProvider<int>((ref) => 0);
 
@@ -37,7 +38,12 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: AppColors.background,
-      drawer: isDesktop ? null : _buildSidebar(context, ref, currentIndex, menuItems),
+      drawer: isDesktop
+          ? null
+          : Drawer(
+              backgroundColor: AppColors.card,
+              child: _buildSidebar(context, ref, currentIndex, menuItems),
+            ),
       body: SafeArea(
         child: Row(
           children: [
@@ -90,7 +96,10 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
           Padding(
             padding: const EdgeInsets.all(24.0),
             child: ListTile(
-              onTap: () => Navigator.of(context).pushReplacementNamed('/login'),
+              onTap: () {
+                ref.read(authProvider.notifier).logout();
+                Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
+              },
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               tileColor: AppColors.error.withValues(alpha: 0.1),
               leading: const Icon(Icons.logout_rounded, color: AppColors.error),
