@@ -10,6 +10,7 @@ import 'package:tan_network/models/user_model.dart';
 import 'package:tan_network/services/api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -106,14 +107,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     oldPasswordController.text,
                     newPasswordController.text,
                   );
-                  if (mounted) {
+                  if (context.mounted) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Password updated successfully!')),
                     );
                   }
                 } catch (e) {
-                  if (mounted) {
+                  if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
                     );
@@ -530,26 +531,32 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
   void _shareToSocial(String code, String platform) async {
     final String message = "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.5tansolution.com\n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${code.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
-    final String encodedMessage = Uri.encodeComponent(message);
     
-    String url = '';
-    switch (platform) {
-      case 'whatsapp':
-        url = "https://wa.me/?text=$encodedMessage";
-        break;
-      case 'x':
-        url = "https://twitter.com/intent/tweet?text=$encodedMessage";
-        break;
-      case 'facebook':
-        // Facebook sharer mostly supports just URLs, but we'll try to pass the link
-        url = "https://www.facebook.com/sharer/sharer.php?u=https://tannetwork.5tansolution.com&quote=$encodedMessage";
-        break;
-    }
+    // Use Share Plus for the most reliable sharing experience on mobile
+    try {
+      await Share.share(message);
+    } catch (e) {
+      // Fallback to URL launcher for web or if share_plus fails
+      final String encodedMessage = Uri.encodeComponent(message);
+      String url = '';
+      
+      switch (platform) {
+        case 'whatsapp':
+          url = "https://wa.me/?text=$encodedMessage";
+          break;
+        case 'x':
+          url = "https://twitter.com/intent/tweet?text=$encodedMessage";
+          break;
+        case 'facebook':
+          url = "https://www.facebook.com/sharer/sharer.php?u=https://tannetwork.5tansolution.com&quote=$encodedMessage";
+          break;
+      }
 
-    if (url.isNotEmpty) {
-      final Uri uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      if (url.isNotEmpty) {
+        final Uri uri = Uri.parse(url);
+        if (await canLaunchUrl(uri)) {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+        }
       }
     }
   }
