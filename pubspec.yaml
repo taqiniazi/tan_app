@@ -46,6 +46,7 @@ dependencies:
   csc_picker_plus: ^0.0.3
   image_picker: ^1.2.1
   url_launcher: ^6.3.2
+  font_awesome_flutter: ^11.0.0
 
 dev_dependencies:
   flutter_test:

@@ -8,6 +8,8 @@ import 'package:tan_network/widgets/logout_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tan_network/models/user_model.dart';
 import 'package:tan_network/services/api_service.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -473,9 +475,83 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildSocialShareButton(
+                context,
+                const FaIcon(FontAwesomeIcons.whatsapp, color: Color(0xFF25D366), size: 24),
+                'WhatsApp',
+                const Color(0xFF25D366),
+                () => _shareToSocial(user.referralCode, 'whatsapp'),
+              ),
+              _buildSocialShareButton(
+                context,
+                const FaIcon(FontAwesomeIcons.xTwitter, color: Colors.white, size: 24),
+                'X',
+                Colors.white,
+                () => _shareToSocial(user.referralCode, 'x'),
+              ),
+              _buildSocialShareButton(
+                context,
+                const FaIcon(FontAwesomeIcons.facebook, color: Color(0xFF1877F2), size: 24),
+                'Facebook',
+                const Color(0xFF1877F2),
+                () => _shareToSocial(user.referralCode, 'facebook'),
+              ),
+            ],
+          ),
         ],
       ),
     );
+  }
+
+  Widget _buildSocialShareButton(BuildContext context, Widget iconWidget, String label, Color color, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+              border: Border.all(color: color.withValues(alpha: 0.2)),
+            ),
+            child: iconWidget,
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+        ],
+      ),
+    );
+  }
+
+  void _shareToSocial(String code, String platform) async {
+    final String message = "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.5tansolution.com\n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${code.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
+    final String encodedMessage = Uri.encodeComponent(message);
+    
+    String url = '';
+    switch (platform) {
+      case 'whatsapp':
+        url = "https://wa.me/?text=$encodedMessage";
+        break;
+      case 'x':
+        url = "https://twitter.com/intent/tweet?text=$encodedMessage";
+        break;
+      case 'facebook':
+        // Facebook sharer mostly supports just URLs, but we'll try to pass the link
+        url = "https://www.facebook.com/sharer/sharer.php?u=https://tannetwork.5tansolution.com&quote=$encodedMessage";
+        break;
+    }
+
+    if (url.isNotEmpty) {
+      final Uri uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    }
   }
 
   Widget _buildLogoutButton(BuildContext context, WidgetRef ref) {
