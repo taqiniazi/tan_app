@@ -238,7 +238,7 @@ class ApiService {
   Future<double> getBalance() async {
     try {
       final response = await _dio.get('/balance');
-      return (response.data['balance'] as num).toDouble();
+      return (response.data['totalBalance'] as num).toDouble();
     } catch (e) {
       return 0.0;
     }
