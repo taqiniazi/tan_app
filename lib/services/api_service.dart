@@ -14,7 +14,7 @@ class ApiService {
 
   static const String _lastActivityKey = 'last_activity';
   static const int _inactivityTimeoutHours = 48;
-  static const String _baseUrl = 'https://5tansolution.com/tan_network/api';
+  static const String _baseUrl = 'https://www.5tansolution.com/tan_network/api';
   String get baseUrl => _baseUrl;
 
   ApiService() {
@@ -66,10 +66,20 @@ class ApiService {
           }
           
           String message = 'An error occurred';
-          if (e.response?.data != null) {
-            if (e.response?.data is Map) {
-              message = e.response?.data['message'] ?? e.response?.data['error'] ?? message;
+          if (e.type == DioExceptionType.connectionTimeout) message = 'Connection Timeout. Please check your internet.';
+          if (e.type == DioExceptionType.receiveTimeout) message = 'Server is taking too long to respond.';
+          if (e.type == DioExceptionType.badResponse) {
+            final status = e.response?.statusCode;
+            message = 'Server Error ($status)';
+            if (e.response?.data != null) {
+              if (e.response?.data is Map) {
+                message = e.response?.data['message'] ?? e.response?.data['error'] ?? message;
+              } else if (e.response?.data is String && e.response!.data.isNotEmpty) {
+                message = e.response!.data;
+              }
             }
+          } else if (e.message != null && e.message!.contains('SocketException')) {
+            message = 'No Internet Connection or Server Unreachable';
           }
           return handler.next(e.copyWith(message: message));
         },
