@@ -6,7 +6,6 @@ import 'package:tan_network/screens/signup_screen.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/crypto_text_field.dart';
 import 'package:tan_network/admin/admin_layout.dart';
-import 'package:tan_network/widgets/animations.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -29,23 +28,27 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   void _login() async {
     if (_formKey.currentState!.validate()) {
-      await ref.read(authProvider.notifier).login(
-            _emailController.text.trim(),
-            _passwordController.text.trim(),
-          );
-      
+      await ref
+          .read(authProvider.notifier)
+          .login(_emailController.text.trim(), _passwordController.text.trim());
+
       final authState = ref.read(authProvider);
       if (authState.user != null) {
         if (mounted) {
-          final target = authState.user!.isAdmin ? const AdminLayout() : const MainLayout();
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => target),
-          );
+          final target = authState.user!.isAdmin
+              ? const AdminLayout()
+              : const MainLayout();
+          Navigator.of(
+            context,
+          ).pushReplacement(MaterialPageRoute(builder: (context) => target));
         }
       } else if (authState.error != null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(authState.error!), backgroundColor: AppColors.error),
+            SnackBar(
+              content: Text(authState.error!),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       }
@@ -66,12 +69,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.lock_person_rounded, size: 80, color: AppColors.primary),
+                const Icon(
+                  Icons.lock_person_rounded,
+                  size: 80,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(height: 24),
                 const Text(
                   'TAN Network Login',
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
@@ -84,7 +95,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   controller: _emailController,
                   label: 'Email',
                   icon: Icons.email_outlined,
-                  validator: (val) => val == null || !val.contains('@') ? 'Invalid email' : null,
+                  validator: (val) => val == null || !val.contains('@')
+                      ? 'Invalid email'
+                      : null,
                 ),
                 const SizedBox(height: 16),
                 CryptoTextField(
@@ -92,23 +105,33 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   label: 'Password',
                   icon: Icons.lock_outline,
                   isPassword: true,
-                  validator: (val) => val == null || val.length < 6 ? 'Min 6 characters' : null,
+                  validator: (val) =>
+                      val == null || val.length < 6 ? 'Min 6 characters' : null,
                 ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: authState.isLoading ? null : _login,
                   child: authState.isLoading
-                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : const Text('LOGIN'),
                 ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => const SignupScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const SignupScreen(),
+                      ),
                     );
                   },
-                  child: const Text('Don\'t have an account? Sign Up', style: TextStyle(color: AppColors.accent)),
+                  child: const Text(
+                    'Don\'t have an account? Sign Up',
+                    style: TextStyle(color: AppColors.accent),
+                  ),
                 ),
               ],
             ),

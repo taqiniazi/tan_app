@@ -14,7 +14,7 @@ class ApiService {
 
   static const String _lastActivityKey = 'last_activity';
   static const int _inactivityTimeoutHours = 48;
-  static const String _baseUrl = 'https://www.5tansolution.com/tan_network/api';
+  static const String _baseUrl = 'https://tannetwork.online/tan-backend/api';
   String get baseUrl => _baseUrl;
 
   ApiService() {
@@ -34,26 +34,34 @@ class ApiService {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final token = await _storage.read(key: _tokenKey);
-          
+
           if (token != null) {
             // Check Inactivity Timeout
             final lastActivityStr = await _storage.read(key: _lastActivityKey);
             if (lastActivityStr != null) {
               final lastActivity = DateTime.parse(lastActivityStr);
               final difference = DateTime.now().difference(lastActivity);
-              
+
               if (difference.inHours >= _inactivityTimeoutHours) {
                 await logout();
-                navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
-                return handler.reject(DioException(
-                  requestOptions: options,
-                  message: 'Session expired due to 48 hours of inactivity.',
-                ));
+                navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                  '/login',
+                  (route) => false,
+                );
+                return handler.reject(
+                  DioException(
+                    requestOptions: options,
+                    message: 'Session expired due to 48 hours of inactivity.',
+                  ),
+                );
               }
             }
-            
+
             // Update last activity on every request
-            await _storage.write(key: _lastActivityKey, value: DateTime.now().toIso8601String());
+            await _storage.write(
+              key: _lastActivityKey,
+              value: DateTime.now().toIso8601String(),
+            );
             options.headers['Authorization'] = 'Bearer $token';
           }
           return handler.next(options);
@@ -61,24 +69,36 @@ class ApiService {
         onError: (DioException e, handler) async {
           if (e.response?.statusCode == 401) {
             await logout();
-            navigatorKey.currentState?.pushNamedAndRemoveUntil('/login', (route) => false);
-            return handler.reject(e.copyWith(message: 'Session expired. Please login again.'));
+            navigatorKey.currentState?.pushNamedAndRemoveUntil(
+              '/login',
+              (route) => false,
+            );
+            return handler.reject(
+              e.copyWith(message: 'Session expired. Please login again.'),
+            );
           }
-          
+
           String message = 'An error occurred';
-          if (e.type == DioExceptionType.connectionTimeout) message = 'Connection Timeout. Please check your internet.';
-          if (e.type == DioExceptionType.receiveTimeout) message = 'Server is taking too long to respond.';
+          if (e.type == DioExceptionType.connectionTimeout)
+            message = 'Connection Timeout. Please check your internet.';
+          if (e.type == DioExceptionType.receiveTimeout)
+            message = 'Server is taking too long to respond.';
           if (e.type == DioExceptionType.badResponse) {
             final status = e.response?.statusCode;
             message = 'Server Error ($status)';
             if (e.response?.data != null) {
               if (e.response?.data is Map) {
-                message = e.response?.data['message'] ?? e.response?.data['error'] ?? message;
-              } else if (e.response?.data is String && e.response!.data.isNotEmpty) {
+                message =
+                    e.response?.data['message'] ??
+                    e.response?.data['error'] ??
+                    message;
+              } else if (e.response?.data is String &&
+                  e.response!.data.isNotEmpty) {
                 message = e.response!.data;
               }
             }
-          } else if (e.message != null && e.message!.contains('SocketException')) {
+          } else if (e.message != null &&
+              e.message!.contains('SocketException')) {
             message = 'No Internet Connection or Server Unreachable';
           }
           return handler.next(e.copyWith(message: message));
@@ -108,23 +128,26 @@ class ApiService {
 
   Future<UserModel?> login(String email, String password) async {
     try {
-      final response = await _dio.post('/login', data: {
-        'email': email, 
-        'password': password
-      });
-      
+      final response = await _dio.post(
+        '/login',
+        data: {'email': email, 'password': password},
+      );
+
       if (response.data is! Map) {
         throw 'Unexpected response from server. Check if the API is deployed correctly.';
       }
-      
+
       final token = response.data['token'];
       await _storage.write(key: _tokenKey, value: token);
-      await _storage.write(key: _lastActivityKey, value: DateTime.now().toIso8601String());
-      
+      await _storage.write(
+        key: _lastActivityKey,
+        value: DateTime.now().toIso8601String(),
+      );
+
       return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
-      final errorMsg = e.response?.data is Map 
-          ? (e.response?.data['message'] ?? e.response?.data['error']) 
+      final errorMsg = e.response?.data is Map
+          ? (e.response?.data['message'] ?? e.response?.data['error'])
           : (e.response?.data?.toString() ?? e.message ?? 'Login failed');
       throw errorMsg.toString();
     } catch (e) {
@@ -132,36 +155,53 @@ class ApiService {
     }
   }
 
-  Future<UserModel?> signup(String name, String email, String password, String? referralCode, String? country, String? city) async {
+  Future<UserModel?> signup(
+    String name,
+    String email,
+    String password,
+    String? referralCode,
+    String? country,
+    String? city,
+  ) async {
     try {
-      final response = await _dio.post('/signup', data: {
-        'name': name,
-        'email': email,
-        'password': password,
-        'country': country,
-        'city': city,
-        'referredBy': referralCode,
-      });
-      
+      final response = await _dio.post(
+        '/signup',
+        data: {
+          'name': name,
+          'email': email,
+          'password': password,
+          'country': country,
+          'city': city,
+          'referredBy': referralCode,
+        },
+      );
+
       final token = response.data['token'];
       await _storage.write(key: _tokenKey, value: token);
-      await _storage.write(key: _lastActivityKey, value: DateTime.now().toIso8601String());
-      
+      await _storage.write(
+        key: _lastActivityKey,
+        value: DateTime.now().toIso8601String(),
+      );
+
       return UserModel.fromJson(response.data['user']);
     } on DioException catch (e) {
-      final errorMsg = e.response?.data?.toString() ?? e.message ?? 'Signup failed';
+      final errorMsg =
+          e.response?.data?.toString() ?? e.message ?? 'Signup failed';
       throw errorMsg;
     }
   }
 
   Future<void> updatePassword(String oldPassword, String newPassword) async {
     try {
-      await _dio.post('/update-password', data: {
-        'oldPassword': oldPassword,
-        'newPassword': newPassword,
-      });
+      await _dio.post(
+        '/update-password',
+        data: {'oldPassword': oldPassword, 'newPassword': newPassword},
+      );
     } on DioException catch (e) {
-      final errorMsg = e.response?.data?.toString() ?? e.message ?? 'Failed to update password';
+      final errorMsg =
+          e.response?.data?.toString() ??
+          e.message ??
+          'Failed to update password';
       throw errorMsg;
     }
   }
@@ -174,7 +214,8 @@ class ApiService {
       final response = await _dio.post('/update-profile-image', data: formData);
       return response.data['imageUrl'];
     } on DioException catch (e) {
-      final errorMsg = e.response?.data?.toString() ?? e.message ?? 'Failed to upload image';
+      final errorMsg =
+          e.response?.data?.toString() ?? e.message ?? 'Failed to upload image';
       throw errorMsg;
     }
   }
@@ -246,11 +287,10 @@ class ApiService {
 
   Future<void> withdraw(double amount, String address, String network) async {
     try {
-      await _dio.post('/withdraw', data: {
-        'amount': amount,
-        'address': address,
-        'network': network,
-      });
+      await _dio.post(
+        '/withdraw',
+        data: {'amount': amount, 'address': address, 'network': network},
+      );
     } on DioException catch (e) {
       throw e.message ?? 'Withdrawal failed';
     }
@@ -277,10 +317,10 @@ class ApiService {
 
   Future<void> verifyPayment(String txHash, String network) async {
     try {
-      await _dio.post('/verify-payment', data: {
-        'txHash': txHash,
-        'network': network,
-      });
+      await _dio.post(
+        '/verify-payment',
+        data: {'txHash': txHash, 'network': network},
+      );
     } on DioException catch (e) {
       throw e.message ?? 'Verification failed';
     }
@@ -300,14 +340,14 @@ class ApiService {
     try {
       final response = await _dio.get('/admin/analytics');
       final withdrawalsResponse = await _dio.get('/admin/withdrawals');
-      
+
       final stats = response.data;
       if (withdrawalsResponse.data is List) {
         stats['pendingWithdrawals'] = (withdrawalsResponse.data as List).length;
       } else {
         stats['pendingWithdrawals'] = 0;
       }
-      
+
       return stats;
     } catch (e) {
       throw 'Failed to fetch admin stats';
@@ -326,10 +366,10 @@ class ApiService {
 
   Future<void> approveWithdrawal(String id, String txHash) async {
     try {
-      await _dio.post('/admin/withdraw/approve', data: {
-        'withdrawalId': id,
-        'txHash': txHash,
-      });
+      await _dio.post(
+        '/admin/withdraw/approve',
+        data: {'withdrawalId': id, 'txHash': txHash},
+      );
     } on DioException catch (e) {
       throw e.message ?? 'Failed to approve withdrawal';
     }
@@ -337,9 +377,7 @@ class ApiService {
 
   Future<void> rejectWithdrawal(String id) async {
     try {
-      await _dio.post('/admin/withdraw/reject', data: {
-        'withdrawalId': id,
-      });
+      await _dio.post('/admin/withdraw/reject', data: {'withdrawalId': id});
     } on DioException catch (e) {
       throw e.message ?? 'Failed to reject withdrawal';
     }

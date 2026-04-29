@@ -36,10 +36,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         setState(() => _isUploading = true);
         final apiService = ref.read(apiServiceProvider);
         await apiService.uploadProfileImage(image.path);
-        
+
         // Refresh profile to get updated image
         await ref.read(authProvider.notifier).fetchProfile();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Profile picture updated!')),
@@ -49,7 +49,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -67,7 +70,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           backgroundColor: AppColors.card,
-          title: const Text('Update Password', style: TextStyle(color: Colors.white)),
+          title: const Text(
+            'Update Password',
+            style: TextStyle(color: Colors.white),
+          ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -98,34 +104,49 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: isLoading ? null : () async {
-                if (oldPasswordController.text.isEmpty || newPasswordController.text.isEmpty) return;
-                
-                setDialogState(() => isLoading = true);
-                try {
-                  await ref.read(apiServiceProvider).updatePassword(
-                    oldPasswordController.text,
-                    newPasswordController.text,
-                  );
-                  if (context.mounted) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Password updated successfully!')),
-                    );
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error),
-                    );
-                  }
-                } finally {
-                  setDialogState(() => isLoading = false);
-                }
-              },
-              child: isLoading 
-                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Text('UPDATE'),
+              onPressed: isLoading
+                  ? null
+                  : () async {
+                      if (oldPasswordController.text.isEmpty ||
+                          newPasswordController.text.isEmpty)
+                        return;
+
+                      setDialogState(() => isLoading = true);
+                      try {
+                        await ref
+                            .read(apiServiceProvider)
+                            .updatePassword(
+                              oldPasswordController.text,
+                              newPasswordController.text,
+                            );
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Password updated successfully!'),
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Error: $e'),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                      } finally {
+                        setDialogState(() => isLoading = false);
+                      }
+                    },
+              child: isLoading
+                  ? const SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Text('UPDATE'),
             ),
           ],
         ),
@@ -208,18 +229,26 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           CircleAvatar(
                             radius: 50,
                             backgroundColor: AppColors.card,
-                            backgroundImage: user.profileImage != null 
-                              ? NetworkImage('${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}')
-                              : null,
-                            child: user.profileImage == null 
-                              ? Text(
-                                  user.name[0].toUpperCase(),
-                                  style: const TextStyle(fontSize: 40, color: AppColors.primary, fontWeight: FontWeight.bold),
-                                )
-                              : null,
+                            backgroundImage: user.profileImage != null
+                                ? NetworkImage(
+                                    '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}',
+                                  )
+                                : null,
+                            child: user.profileImage == null
+                                ? Text(
+                                    user.name[0].toUpperCase(),
+                                    style: const TextStyle(
+                                      fontSize: 40,
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : null,
                           ),
                           if (_isUploading)
-                            const CircularProgressIndicator(color: AppColors.primary),
+                            const CircularProgressIndicator(
+                              color: AppColors.primary,
+                            ),
                           Positioned(
                             bottom: 0,
                             right: 0,
@@ -229,7 +258,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                 color: AppColors.primary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.camera_alt, size: 16, color: Colors.black),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                size: 16,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ],
@@ -246,7 +279,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           color: AppColors.accent,
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.star_rounded, size: 20, color: Colors.black),
+                        child: const Icon(
+                          Icons.star_rounded,
+                          size: 20,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                 ],
@@ -254,12 +291,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               const SizedBox(height: 16),
               Text(
                 user.name,
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(height: 4),
               Text(
                 user.email,
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 14),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -273,17 +317,35 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     return Row(
       children: [
         Expanded(
-          child: _statItem('Mining Rate', '${user.miningRate}', 'TAN/h', Icons.bolt_rounded, AppColors.primary),
+          child: _statItem(
+            'Mining Rate',
+            '${user.miningRate}',
+            'TAN/h',
+            Icons.bolt_rounded,
+            AppColors.primary,
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _statItem('Referral Earnings', '${user.referralEarnings.toStringAsFixed(2)}', 'TAN', Icons.people_alt_rounded, AppColors.accent),
+          child: _statItem(
+            'Referral Earnings',
+            user.referralEarnings.toStringAsFixed(2),
+            'TAN',
+            Icons.people_alt_rounded,
+            AppColors.accent,
+          ),
         ),
       ],
     );
   }
 
-  Widget _statItem(String label, String value, String unit, IconData icon, Color color) {
+  Widget _statItem(
+    String label,
+    String value,
+    String unit,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -296,7 +358,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 16),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
+          ),
           const SizedBox(height: 4),
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -305,9 +373,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               crossAxisAlignment: CrossAxisAlignment.baseline,
               textBaseline: TextBaseline.alphabetic,
               children: [
-                Text(value, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.white)),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
                 const SizedBox(width: 4),
-                Text(unit, style: const TextStyle(fontSize: 10, color: AppColors.textSecondary)),
+                Text(
+                  unit,
+                  style: const TextStyle(
+                    fontSize: 10,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -325,11 +406,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       ),
       child: Column(
         children: [
-          _infoRow(Icons.public_rounded, 'Country', user.country ?? 'Not Provided'),
+          _infoRow(
+            Icons.public_rounded,
+            'Country',
+            user.country ?? 'Not Provided',
+          ),
           const Divider(height: 40, color: Colors.white10),
-          _infoRow(Icons.location_city_rounded, 'City', user.city ?? 'Not Provided'),
+          _infoRow(
+            Icons.location_city_rounded,
+            'City',
+            user.city ?? 'Not Provided',
+          ),
           const Divider(height: 40, color: Colors.white10),
-          _infoRow(Icons.security_rounded, 'Account ID', '#${user.id.substring(user.id.length - 8)}'),
+          _infoRow(
+            Icons.security_rounded,
+            'Account ID',
+            '#${user.id.substring(user.id.length - 8)}',
+          ),
         ],
       ),
     );
@@ -351,8 +444,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-              Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: Colors.white)),
+              Text(
+                label,
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 15,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
         ),
@@ -370,7 +476,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Security', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            'Security',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
           const SizedBox(height: 20),
           ListTile(
             onTap: _showUpdatePasswordDialog,
@@ -381,11 +494,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 color: AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.lock_outline_rounded, size: 20, color: AppColors.accent),
+              child: const Icon(
+                Icons.lock_outline_rounded,
+                size: 20,
+                color: AppColors.accent,
+              ),
             ),
-            title: const Text('Change Password', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: const Text('Update your login credentials', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-            trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+            title: const Text(
+              'Change Password',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: const Text(
+              'Update your login credentials',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
+            trailing: const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -402,7 +531,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Support', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+          const Text(
+            'Support',
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
           const SizedBox(height: 20),
           ListTile(
             onTap: () => Navigator.pushNamed(context, '/contact'),
@@ -413,11 +549,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 color: AppColors.background,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Icon(Icons.contact_support_rounded, size: 20, color: AppColors.primary),
+              child: const Icon(
+                Icons.contact_support_rounded,
+                size: 20,
+                color: AppColors.primary,
+              ),
             ),
-            title: const Text('Contact Us', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: const Text('Get help and platform information', style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
-            trailing: const Icon(Icons.chevron_right_rounded, color: AppColors.textSecondary),
+            title: const Text(
+              'Contact Us',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: const Text(
+              'Get help and platform information',
+              style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            ),
+            trailing: const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
@@ -429,7 +581,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.primary.withValues(alpha: 0.1), AppColors.accent.withValues(alpha: 0.1)],
+          colors: [
+            AppColors.primary.withValues(alpha: 0.1),
+            AppColors.accent.withValues(alpha: 0.1),
+          ],
         ),
         borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
@@ -440,7 +595,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               Icon(Icons.card_giftcard_rounded, color: AppColors.primary),
               SizedBox(width: 12),
-              Text('Your Referral Code', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+              Text(
+                'Your Referral Code',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -454,24 +615,41 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  user.referralCode.isNotEmpty ? user.referralCode.toUpperCase() : 'NOT SET',
+                  user.referralCode.isNotEmpty
+                      ? user.referralCode.toUpperCase()
+                      : 'NOT SET',
                   style: TextStyle(
-                    fontSize: 20, 
-                    fontWeight: FontWeight.bold, 
-                    letterSpacing: 2, 
-                    color: user.referralCode.isNotEmpty ? AppColors.primary : Colors.grey,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 2,
+                    color: user.referralCode.isNotEmpty
+                        ? AppColors.primary
+                        : Colors.grey,
                   ),
                 ),
                 IconButton(
-                  onPressed: user.referralCode.isNotEmpty ? () {
-                    final String shareMessage = "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.5tansolution.com\n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${user.referralCode.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
-                    
-                    Clipboard.setData(ClipboardData(text: shareMessage));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Sharing message copied to clipboard!')),
-                    );
-                  } : null,
-                  icon: Icon(Icons.copy_rounded, color: user.referralCode.isNotEmpty ? Colors.white70 : Colors.white24, size: 20),
+                  onPressed: user.referralCode.isNotEmpty
+                      ? () {
+                          final String shareMessage =
+                              "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.online \n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${user.referralCode.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
+
+                          Clipboard.setData(ClipboardData(text: shareMessage));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Sharing message copied to clipboard!',
+                              ),
+                            ),
+                          );
+                        }
+                      : null,
+                  icon: Icon(
+                    Icons.copy_rounded,
+                    color: user.referralCode.isNotEmpty
+                        ? Colors.white70
+                        : Colors.white24,
+                    size: 20,
+                  ),
                 ),
               ],
             ),
@@ -482,21 +660,33 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             children: [
               _buildSocialShareButton(
                 context,
-                const FaIcon(FontAwesomeIcons.whatsapp, color: Color(0xFF25D366), size: 24),
+                const FaIcon(
+                  FontAwesomeIcons.whatsapp,
+                  color: Color(0xFF25D366),
+                  size: 24,
+                ),
                 'WhatsApp',
                 const Color(0xFF25D366),
                 () => _shareToSocial(user.referralCode, 'whatsapp'),
               ),
               _buildSocialShareButton(
                 context,
-                const FaIcon(FontAwesomeIcons.xTwitter, color: Colors.white, size: 24),
+                const FaIcon(
+                  FontAwesomeIcons.xTwitter,
+                  color: Colors.white,
+                  size: 24,
+                ),
                 'X',
                 Colors.white,
                 () => _shareToSocial(user.referralCode, 'x'),
               ),
               _buildSocialShareButton(
                 context,
-                const FaIcon(FontAwesomeIcons.facebook, color: Color(0xFF1877F2), size: 24),
+                const FaIcon(
+                  FontAwesomeIcons.facebook,
+                  color: Color(0xFF1877F2),
+                  size: 24,
+                ),
                 'Facebook',
                 const Color(0xFF1877F2),
                 () => _shareToSocial(user.referralCode, 'facebook'),
@@ -508,7 +698,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 
-  Widget _buildSocialShareButton(BuildContext context, Widget iconWidget, String label, Color color, VoidCallback onTap) {
+  Widget _buildSocialShareButton(
+    BuildContext context,
+    Widget iconWidget,
+    String label,
+    Color color,
+    VoidCallback onTap,
+  ) {
     return InkWell(
       onTap: onTap,
       child: Column(
@@ -523,15 +719,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             child: iconWidget,
           ),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 10)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 10,
+            ),
+          ),
         ],
       ),
     );
   }
 
   void _shareToSocial(String code, String platform) async {
-    final String message = "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: tannetwork.5tansolution.com\n🎁 Use my Invite Code for a FREE bonus + faster mining speed: ${code.toUpperCase()}\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
-    
+    final String message =
+        "Don't miss out on the next big cloud mining project! 🌐⛏️ Download TAN Network and start earning free crypto today directly from your phone. No battery drain, completely free.\n\n📲 Download the APK: https://www.tannetwork.online \n🎁 Use my Invite Code for a FREE bonus + faster mining speed:*${code.toUpperCase()}*\n\n#TANNetwork #CloudMining #Crypto #PassiveIncome #FreeCrypto";
+
     // Use Share Plus for the most reliable sharing experience on mobile
     try {
       await Share.share(message);
@@ -539,7 +742,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       // Fallback to URL launcher for web or if share_plus fails
       final String encodedMessage = Uri.encodeComponent(message);
       String url = '';
-      
+
       switch (platform) {
         case 'whatsapp':
           url = "https://wa.me/?text=$encodedMessage";
@@ -548,7 +751,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           url = "https://twitter.com/intent/tweet?text=$encodedMessage";
           break;
         case 'facebook':
-          url = "https://www.facebook.com/sharer/sharer.php?u=https://tannetwork.5tansolution.com&quote=$encodedMessage";
+          url =
+              "https://www.facebook.com/sharer/sharer.php?u=https://tannetwork.5tansolution.com&quote=$encodedMessage";
           break;
       }
 
@@ -568,7 +772,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         Navigator.of(context).pushReplacementNamed('/login');
       },
       icon: const Icon(Icons.logout_rounded, size: 20, color: Colors.white),
-      label: const Text('LOGOUT ACCOUNT', style: TextStyle(letterSpacing: 1.2, fontWeight: FontWeight.bold)),
+      label: const Text(
+        'LOGOUT ACCOUNT',
+        style: TextStyle(letterSpacing: 1.2, fontWeight: FontWeight.bold),
+      ),
       style: ElevatedButton.styleFrom(
         backgroundColor: AppColors.error.withValues(alpha: 0.8),
         minimumSize: const Size(double.infinity, 56),
