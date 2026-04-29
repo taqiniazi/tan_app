@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/providers/admin_provider.dart';
-import 'package:intl/intl.dart';
 
 class AdminDashboard extends ConsumerWidget {
   const AdminDashboard({super.key});
@@ -43,16 +42,40 @@ class AdminDashboard extends ConsumerWidget {
                   physics: const NeverScrollableScrollPhysics(),
                   childAspectRatio: isMobile ? 1.1 : 1.3,
                   children: [
-                    _buildStatCard('Total Users', _formatValue(users['total']), Icons.people_rounded, AppColors.primary),
-                    _buildStatCard('Total Volume', '${_formatValue(economics['totalMined'])} TAN', Icons.bar_chart_rounded, AppColors.accent),
-                    _buildStatCard('Pending', pendingWithdrawals.toString(), Icons.pending_actions_rounded, Colors.orange),
-                    _buildStatCard('Miners', _formatValue(users['activeMiners']), Icons.bolt_rounded, AppColors.primary),
+                    _buildStatCard(
+                      'Total Users',
+                      _formatValue(users['total']),
+                      Icons.people_rounded,
+                      AppColors.primary,
+                    ),
+                    _buildStatCard(
+                      'Total Volume',
+                      '${_formatValue(economics['totalMined'])} TAN',
+                      Icons.bar_chart_rounded,
+                      AppColors.accent,
+                    ),
+                    _buildStatCard(
+                      'Pending',
+                      pendingWithdrawals.toString(),
+                      Icons.pending_actions_rounded,
+                      Colors.orange,
+                    ),
+                    _buildStatCard(
+                      'Miners',
+                      _formatValue(users['activeMiners']),
+                      Icons.bolt_rounded,
+                      AppColors.primary,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 32),
                 const Text(
                   'Revenue Performance',
-                  style: TextStyle(color: AppColors.textPrimary, fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    color: AppColors.textPrimary,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 Container(
@@ -61,15 +84,24 @@ class AdminDashboard extends ConsumerWidget {
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.05),
+                    ),
                   ),
                   child: const Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.insights_rounded, color: AppColors.textSecondary, size: 48),
+                        Icon(
+                          Icons.insights_rounded,
+                          color: AppColors.textSecondary,
+                          size: 48,
+                        ),
                         SizedBox(height: 16),
-                        Text('Analytics coming soon', style: TextStyle(color: AppColors.textSecondary)),
+                        Text(
+                          'Analytics coming soon',
+                          style: TextStyle(color: AppColors.textSecondary),
+                        ),
                       ],
                     ),
                   ),
@@ -85,7 +117,10 @@ class AdminDashboard extends ConsumerWidget {
             children: [
               const Icon(Icons.error_outline, color: Colors.red, size: 48),
               const SizedBox(height: 16),
-              Text('Error: $err', style: const TextStyle(color: AppColors.textSecondary)),
+              Text(
+                'Error: $err',
+                style: const TextStyle(color: AppColors.textSecondary),
+              ),
               TextButton(
                 onPressed: () => ref.refresh(adminStatsProvider),
                 child: const Text('Retry'),
@@ -108,7 +143,12 @@ class AdminDashboard extends ConsumerWidget {
     return n.toString();
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String title,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -138,7 +178,10 @@ class AdminDashboard extends ConsumerWidget {
           const SizedBox(height: 12),
           Text(
             title,
-            style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 12,
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

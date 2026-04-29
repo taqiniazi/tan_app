@@ -4,7 +4,6 @@ import 'package:tan_network/providers/balance_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/balance_card.dart';
 import 'package:tan_network/widgets/mining_status_card.dart';
-import 'package:tan_network/widgets/premium_banner.dart';
 import 'package:tan_network/screens/withdrawal_history_screen.dart';
 import 'package:tan_network/widgets/animations.dart';
 import 'package:tan_network/providers/auth_provider.dart';
@@ -47,7 +46,10 @@ class HomeScreen extends ConsumerWidget {
               duration: const Duration(milliseconds: 400),
               child: Text(
                 'Good morning, ${user?.name ?? "User"}',
-                style: const TextStyle(color: AppColors.textSecondary, fontSize: 16),
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 16,
+                ),
               ),
             ),
             if (isBanned) ...[
@@ -60,7 +62,9 @@ class HomeScreen extends ConsumerWidget {
                 child: BalanceCard(
                   balance: balance,
                   dailyProfit: (user?.miningRate ?? 0.0) * 24,
-                  hashRate: (user?.miningRate ?? 0.0) * 10, // Example scale: 1 TAN/h = 10 MH/s
+                  hashRate:
+                      (user?.miningRate ?? 0.0) *
+                      10, // Example scale: 1 TAN/h = 10 MH/s
                   isPremium: user?.isPremium ?? false,
                   isMining: miningState.isMining,
                 ),
@@ -75,7 +79,9 @@ class HomeScreen extends ConsumerWidget {
                 duration: const Duration(milliseconds: 800),
                 child: MiningStatusCard(
                   isMining: miningState.isMining,
-                  hashRate: miningState.isMining ? (user?.miningRate ?? 1.0) : 0.0,
+                  hashRate: miningState.isMining
+                      ? (user?.miningRate ?? 1.0)
+                      : 0.0,
                 ),
               ),
             ],
@@ -88,7 +94,10 @@ class HomeScreen extends ConsumerWidget {
                   return const Center(
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text('No recent activity', style: TextStyle(color: AppColors.textSecondary)),
+                      child: Text(
+                        'No recent activity',
+                        style: TextStyle(color: AppColors.textSecondary),
+                      ),
                     ),
                   );
                 }
@@ -97,11 +106,11 @@ class HomeScreen extends ConsumerWidget {
                     final type = activity['type'] as String;
                     final amount = activity['amount'] as num;
                     final date = DateTime.parse(activity['createdAt']);
-                    
+
                     IconData icon;
                     Color color;
                     String title;
-                    
+
                     switch (type) {
                       case 'mining':
                         icon = Icons.trending_up;
@@ -155,7 +164,9 @@ class HomeScreen extends ConsumerWidget {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                  content: Text('Withdrawal feature is currently under maintenance.'),
+                  content: Text(
+                    'Withdrawal feature is currently under maintenance.',
+                  ),
                   backgroundColor: AppColors.accent,
                 ),
               );
@@ -174,7 +185,12 @@ class HomeScreen extends ConsumerWidget {
         const SizedBox(width: 16),
         Expanded(
           child: AnimatedTap(
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const WithdrawalHistoryScreen())),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const WithdrawalHistoryScreen(),
+              ),
+            ),
             child: _actionButton(
               context,
               'History',
@@ -187,7 +203,12 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _actionButton(BuildContext context, String label, IconData icon, Color color) {
+  Widget _actionButton(
+    BuildContext context,
+    String label,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -219,7 +240,10 @@ class HomeScreen extends ConsumerWidget {
         ),
         TextButton(
           onPressed: () => ref.invalidate(activityProvider),
-          child: const Text('Refresh', style: TextStyle(color: AppColors.primary)),
+          child: const Text(
+            'Refresh',
+            style: TextStyle(color: AppColors.primary),
+          ),
         ),
       ],
     );
@@ -312,7 +336,11 @@ class HomeScreen extends ConsumerWidget {
           SizedBox(height: 16),
           Text(
             'ACCOUNT BANNED',
-            style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              color: AppColors.error,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
           SizedBox(height: 12),
           Text(
@@ -328,7 +356,10 @@ class HomeScreen extends ConsumerWidget {
           ),
           Text(
             'support@tannetwork.online',
-            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),

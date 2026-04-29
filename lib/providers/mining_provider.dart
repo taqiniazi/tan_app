@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/services/api_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class MiningState {
   final bool isMining;
@@ -68,16 +67,16 @@ class MiningNotifier extends StateNotifier<MiningState> {
         } else {
           // Session expired but not claimed in backend
           state = state.copyWith(
-            isMining: false, 
-            remainingTime: Duration.zero, 
+            isMining: false,
+            remainingTime: Duration.zero,
             miningRate: rate,
             canClaim: true,
           );
         }
       } else {
         state = state.copyWith(
-          isMining: false, 
-          remainingTime: Duration.zero, 
+          isMining: false,
+          remainingTime: Duration.zero,
           miningRate: rate,
           canClaim: false,
         );
@@ -101,7 +100,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
 
       if (remaining.isNegative) {
         state = state.copyWith(
-          isMining: false, 
+          isMining: false,
           remainingTime: Duration.zero,
           canClaim: true,
         );
@@ -114,7 +113,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
 
   Future<void> startMining() async {
     if (state.isMining || state.canClaim) return;
-    
+
     try {
       await _apiService.startMining();
       await syncWithBackend();
@@ -139,6 +138,8 @@ class MiningNotifier extends StateNotifier<MiningState> {
   }
 }
 
-final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((ref) {
+final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((
+  ref,
+) {
   return MiningNotifier(ref.watch(apiServiceProvider));
 });

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:lottie/lottie.dart';
 import 'package:tan_network/providers/mining_provider.dart';
 import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
@@ -33,11 +32,16 @@ class MiningScreen extends ConsumerWidget {
             const SizedBox(height: 32),
             if (miningState.isMining) ...[
               MiningProgressBar(
-                progress: (24 * 3600 - miningState.remainingTime.inSeconds) / (24 * 3600),
+                progress:
+                    (24 * 3600 - miningState.remainingTime.inSeconds) /
+                    (24 * 3600),
               ),
               const SizedBox(height: 32),
             ],
-            if (isBanned) _buildBannedMessage() else _buildActionCard(context, miningState, ref),
+            if (isBanned)
+              _buildBannedMessage()
+            else
+              _buildActionCard(context, miningState, ref),
             const SizedBox(height: 40),
           ],
         ),
@@ -96,7 +100,11 @@ class MiningScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildActionCard(BuildContext context, MiningState state, WidgetRef ref) {
+  Widget _buildActionCard(
+    BuildContext context,
+    MiningState state,
+    WidgetRef ref,
+  ) {
     final String timerText = _formatDuration(state.remainingTime);
 
     return Container(
@@ -124,7 +132,10 @@ class MiningScreen extends ConsumerWidget {
           ] else ...[
             const Text(
               'READY TO MINE',
-              style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 8),
             const Text(
@@ -135,43 +146,50 @@ class MiningScreen extends ConsumerWidget {
           ],
           const SizedBox(height: 32),
           ElevatedButton(
-            onPressed: state.isMining 
-                ? null 
+            onPressed: state.isMining
+                ? null
                 : () async {
                     try {
                       if (state.canClaim) {
                         await ref.read(miningProvider.notifier).claimReward();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Rewards claimed successfully!')),
+                            const SnackBar(
+                              content: Text('Rewards claimed successfully!'),
+                            ),
                           );
                         }
                       } else {
                         await ref.read(miningProvider.notifier).startMining();
                         if (context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Mining session started!')),
+                            const SnackBar(
+                              content: Text('Mining session started!'),
+                            ),
                           );
                         }
                       }
                     } catch (e) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(e.toString()), backgroundColor: Colors.redAccent),
+                          SnackBar(
+                            content: Text(e.toString()),
+                            backgroundColor: Colors.redAccent,
+                          ),
                         );
                       }
                     }
                   },
             style: ElevatedButton.styleFrom(
-              backgroundColor: state.isMining 
-                  ? Colors.grey.withValues(alpha: 0.2) 
+              backgroundColor: state.isMining
+                  ? Colors.grey.withValues(alpha: 0.2)
                   : (state.canClaim ? AppColors.accent : AppColors.primary),
               disabledBackgroundColor: Colors.grey.withValues(alpha: 0.1),
               minimumSize: const Size(double.infinity, 60),
             ),
             child: Text(
-              state.isMining 
-                  ? 'MINING IN PROGRESS' 
+              state.isMining
+                  ? 'MINING IN PROGRESS'
                   : (state.canClaim ? 'CLAIM REWARDS' : 'START MINING'),
               style: TextStyle(
                 color: state.isMining ? AppColors.textSecondary : Colors.black,
@@ -200,7 +218,11 @@ class MiningScreen extends ConsumerWidget {
           SizedBox(height: 16),
           Text(
             'ACCOUNT BANNED',
-            style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold, fontSize: 18),
+            style: TextStyle(
+              color: AppColors.error,
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
           ),
           SizedBox(height: 12),
           Text(
@@ -216,7 +238,10 @@ class MiningScreen extends ConsumerWidget {
           ),
           Text(
             'support@tannetwork.online',
-            style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -238,7 +263,8 @@ class _MiningPulseAnimation extends StatefulWidget {
   State<_MiningPulseAnimation> createState() => _MiningPulseAnimationState();
 }
 
-class _MiningPulseAnimationState extends State<_MiningPulseAnimation> with SingleTickerProviderStateMixin {
+class _MiningPulseAnimationState extends State<_MiningPulseAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
@@ -251,13 +277,15 @@ class _MiningPulseAnimationState extends State<_MiningPulseAnimation> with Singl
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
-    _scaleAnimation = Tween<double>(begin: 0.9, end: 1.2).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.9,
+      end: 1.2,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
-    _glowAnimation = Tween<double>(begin: 0.1, end: 0.6).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _glowAnimation = Tween<double>(
+      begin: 0.1,
+      end: 0.6,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -278,7 +306,9 @@ class _MiningPulseAnimationState extends State<_MiningPulseAnimation> with Singl
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.primary.withValues(alpha: _glowAnimation.value),
+                  color: AppColors.primary.withValues(
+                    alpha: _glowAnimation.value,
+                  ),
                   blurRadius: 40 * _scaleAnimation.value,
                   spreadRadius: 10 * _scaleAnimation.value,
                 ),

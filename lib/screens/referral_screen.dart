@@ -35,9 +35,9 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
 
   void _copyCode(String code) {
     Clipboard.setData(ClipboardData(text: code));
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Referral code copied!')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Referral code copied!')));
   }
 
   @override
@@ -67,7 +67,11 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
               const SizedBox(height: 32),
               const Text(
                 'YOUR NETWORK',
-                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1),
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
               ),
               const SizedBox(height: 16),
               if (referrals.isEmpty)
@@ -77,7 +81,7 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: referrals.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final ref = referrals[index];
                     return _buildReferralTile(ref);
@@ -110,14 +114,21 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             children: [
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.card,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     code,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 2,
+                    ),
                   ),
                 ),
               ),
@@ -138,11 +149,19 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     return Row(
       children: [
         Expanded(
-          child: _statBox('Total Earnings', '${earnings.toStringAsFixed(2)} TAN', Icons.account_balance_wallet_rounded),
+          child: _statBox(
+            'Total Earnings',
+            '${earnings.toStringAsFixed(2)} TAN',
+            Icons.account_balance_wallet_rounded,
+          ),
         ),
         const SizedBox(width: 16),
         Expanded(
-          child: _statBox('Active Referrals', count.toString(), Icons.people_alt_rounded),
+          child: _statBox(
+            'Active Referrals',
+            count.toString(),
+            Icons.people_alt_rounded,
+          ),
         ),
       ],
     );
@@ -160,8 +179,17 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         children: [
           Icon(icon, size: 20, color: AppColors.accent),
           const SizedBox(height: 8),
-          Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
-          Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text(
+            label,
+            style: const TextStyle(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
         ],
       ),
     );
@@ -181,15 +209,27 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
         children: [
           CircleAvatar(
             backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-            child: Text(user['name'][0].toUpperCase(), style: const TextStyle(color: AppColors.primary)),
+            child: Text(
+              user['name'][0].toUpperCase(),
+              style: const TextStyle(color: AppColors.primary),
+            ),
           ),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(user['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text('Joined $formattedDate', style: const TextStyle(color: AppColors.textSecondary, fontSize: 11)),
+                Text(
+                  user['name'],
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  'Joined $formattedDate',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
+                ),
               ],
             ),
           ),
@@ -205,9 +245,16 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
       child: Column(
         children: [
           const SizedBox(height: 40),
-          Icon(Icons.people_outline_rounded, size: 64, color: Colors.white.withValues(alpha: 0.1)),
+          Icon(
+            Icons.people_outline_rounded,
+            size: 64,
+            color: Colors.white.withValues(alpha: 0.1),
+          ),
           const SizedBox(height: 16),
-          const Text('No referrals yet', style: TextStyle(color: AppColors.textSecondary)),
+          const Text(
+            'No referrals yet',
+            style: TextStyle(color: AppColors.textSecondary),
+          ),
         ],
       ),
     );
