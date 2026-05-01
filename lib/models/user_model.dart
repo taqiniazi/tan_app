@@ -66,4 +66,36 @@ class UserModel {
       'isFlagged': isFlagged,
     };
   }
+
+  UserModel copyWith({
+    String? id,
+    String? name,
+    String? email,
+    String? role,
+    double? miningRate,
+    bool? isPremium,
+    String? referralCode,
+    String? country,
+    String? city,
+    String? profileImage,
+    double? referralEarnings,
+    double? totalEarnedFromMining,
+    bool? isFlagged,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      role: role ?? this.role,
+      miningRate: miningRate ?? this.miningRate,
+      isPremium: isPremium ?? this.isPremium,
+      referralCode: referralCode ?? this.referralCode,
+      country: country ?? this.country,
+      city: city ?? this.city,
+      profileImage: profileImage ?? this.profileImage,
+      referralEarnings: referralEarnings ?? this.referralEarnings,
+      totalEarnedFromMining: totalEarnedFromMining ?? this.totalEarnedFromMining,
+      isFlagged: isFlagged ?? this.isFlagged,
+    );
+  }
 }

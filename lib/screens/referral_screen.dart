@@ -5,6 +5,9 @@ import 'package:tan_network/services/api_service.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:tan_network/widgets/logout_button.dart';
+import 'package:tan_network/providers/balance_provider.dart' as tan_network_balance_provider;
+import 'package:tan_network/providers/auth_provider.dart';
+import 'package:tan_network/widgets/premium_banner.dart';
 
 class ReferralScreen extends ConsumerStatefulWidget {
   const ReferralScreen({super.key});
@@ -47,6 +50,8 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
     }
 
     final referrals = (_data['referrals'] as List? ?? []);
+    final balance = ref.watch(tan_network_balance_provider.balanceProvider);
+    final user = ref.watch(authProvider).user;
 
     return Scaffold(
       appBar: AppBar(
@@ -62,8 +67,12 @@ class _ReferralScreenState extends ConsumerState<ReferralScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _buildShareCard(_data['referralCode'] ?? 'N/A'),
+              if (!(user?.isPremium ?? false)) ...[
+                const SizedBox(height: 24),
+                const PremiumUpgradeBanner(),
+              ],
               const SizedBox(height: 32),
-              _buildStatsRow(_data['referralEarnings'] ?? 0, referrals.length),
+              _buildStatsRow(balance, referrals.length),
               const SizedBox(height: 32),
               const Text(
                 'YOUR NETWORK',

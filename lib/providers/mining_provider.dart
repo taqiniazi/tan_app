@@ -46,9 +46,9 @@ class MiningNotifier extends StateNotifier<MiningState> {
   Future<void> syncWithBackend() async {
     try {
       final status = await _apiService.getMiningStatus();
-      final bool isMining = status['isMining'] ?? false;
+      final bool isMining = status['isMining'] == true || status['isMining'] == 'true';
       final String? startTimeStr = status['startTime'];
-      final double rate = (status['rate'] ?? 0.01).toDouble();
+      final double rate = double.tryParse(status['rate']?.toString() ?? '0.01') ?? 0.01;
 
       if (isMining && startTimeStr != null) {
         final startTime = DateTime.parse(startTimeStr);

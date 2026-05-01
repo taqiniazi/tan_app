@@ -62,6 +62,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
     _api.logout();
     state = AuthState();
   }
+
+  void updateUser(UserModel user) {
+    state = state.copyWith(user: user);
+  }
 }
 
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {

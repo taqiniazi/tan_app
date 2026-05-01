@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/logout_button.dart';
+import 'package:tan_network/widgets/premium_banner.dart';
+import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
 import 'package:tan_network/models/user_model.dart';
@@ -22,6 +24,7 @@ class ProfileScreen extends ConsumerStatefulWidget {
 class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
+  File? _localImage;
 
   Future<void> _pickImage() async {
     try {
@@ -33,12 +36,21 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       );
 
       if (image != null) {
-        setState(() => _isUploading = true);
+        setState(() {
+          _isUploading = true;
+          _localImage = File(image.path); // Display instantly while uploading
+        });
+        
         final apiService = ref.read(apiServiceProvider);
-        await apiService.uploadProfileImage(image.path);
+        final imageUrl = await apiService.uploadProfileImage(image.path);
 
-        // Refresh profile to get updated image
-        await ref.read(authProvider.notifier).fetchProfile();
+        // Update Riverpod state instantly to reflect the new image URL
+        final currentUser = ref.read(authProvider).user;
+        if (currentUser != null) {
+          ref.read(authProvider.notifier).updateUser(
+                currentUser.copyWith(profileImage: imageUrl),
+              );
+        }
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -177,6 +189,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   _buildAccountSection(user),
                   const SizedBox(height: 24),
                   _buildReferralCard(context, user),
+                  if (!user.isPremium) ...[
+                    const SizedBox(height: 24),
+                    const PremiumUpgradeBanner(),
+                  ],
                   const SizedBox(height: 24),
                   _buildSecuritySection(),
                   const SizedBox(height: 24),
@@ -229,12 +245,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                           CircleAvatar(
                             radius: 50,
                             backgroundColor: AppColors.card,
-                            backgroundImage: user.profileImage != null
-                                ? NetworkImage(
-                                    '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}',
-                                  )
-                                : null,
-                            child: user.profileImage == null
+                            backgroundImage: _localImage != null
+                                ? FileImage(_localImage!) as ImageProvider
+                                : (user.profileImage != null
+                                    ? NetworkImage(
+                                        '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}',
+                                      )
+                                    : null),
+                            child: _localImage == null && user.profileImage == null
                                 ? Text(
                                     user.name[0].toUpperCase(),
                                     style: const TextStyle(

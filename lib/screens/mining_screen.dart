@@ -5,6 +5,7 @@ import 'package:tan_network/providers/auth_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/mining_progress_bar.dart';
 import 'package:tan_network/widgets/logout_button.dart';
+import 'package:tan_network/widgets/premium_banner.dart';
 
 class MiningScreen extends ConsumerWidget {
   const MiningScreen({super.key});
@@ -40,8 +41,13 @@ class MiningScreen extends ConsumerWidget {
             ],
             if (isBanned)
               _buildBannedMessage()
-            else
+            else ...[
               _buildActionCard(context, miningState, ref),
+              if (!(user?.isPremium ?? false)) ...[
+                const SizedBox(height: 32),
+                const PremiumUpgradeBanner(),
+              ],
+            ],
             const SizedBox(height: 40),
           ],
         ),

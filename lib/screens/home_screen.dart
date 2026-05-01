@@ -11,6 +11,7 @@ import 'package:tan_network/providers/activity_provider.dart';
 import 'package:tan_network/providers/mining_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:tan_network/widgets/logout_button.dart';
+import 'package:tan_network/widgets/premium_banner.dart';
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
@@ -69,6 +70,13 @@ class HomeScreen extends ConsumerWidget {
                   isMining: miningState.isMining,
                 ),
               ),
+              if (!(user?.isPremium ?? false)) ...[
+                const SizedBox(height: 24),
+                FadeSlideTransition(
+                  duration: const Duration(milliseconds: 650),
+                  child: const PremiumUpgradeBanner(),
+                ),
+              ],
               const SizedBox(height: 24),
               FadeSlideTransition(
                 duration: const Duration(milliseconds: 700),
