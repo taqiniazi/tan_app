@@ -12,7 +12,7 @@ import 'package:tan_network/models/user_model.dart';
 import 'package:tan_network/services/api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:share_plus/share_plus.dart';
+import 'package:share_plus/share_plus.dart' as share_plus;
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -120,8 +120,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   ? null
                   : () async {
                       if (oldPasswordController.text.isEmpty ||
-                          newPasswordController.text.isEmpty)
+                          newPasswordController.text.isEmpty) {
                         return;
+                      }
 
                       setDialogState(() => isLoading = true);
                       try {
@@ -755,7 +756,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     // Use Share Plus for the most reliable sharing experience on mobile
     try {
-      await Share.share(message);
+      await share_plus.SharePlus.instance.share(
+        share_plus.ShareParams(text: message),
+      );
     } catch (e) {
       // Fallback to URL launcher for web or if share_plus fails
       final String encodedMessage = Uri.encodeComponent(message);

@@ -79,10 +79,12 @@ class ApiService {
           }
 
           String message = 'An error occurred';
-          if (e.type == DioExceptionType.connectionTimeout)
+          if (e.type == DioExceptionType.connectionTimeout) {
             message = 'Connection Timeout. Please check your internet.';
-          if (e.type == DioExceptionType.receiveTimeout)
+          }
+          if (e.type == DioExceptionType.receiveTimeout) {
             message = 'Server is taking too long to respond.';
+          }
           if (e.type == DioExceptionType.badResponse) {
             final status = e.response?.statusCode;
             message = 'Server Error ($status)';

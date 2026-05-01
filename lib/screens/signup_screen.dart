@@ -21,7 +21,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _referralController = TextEditingController();
 
   String? _selectedCountry;
-  String? _selectedState;
   String? _selectedCity;
 
   @override
@@ -105,7 +104,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               const SizedBox(height: 16),
               CustomLocationPicker(
                 onCountrySelected: (val) => setState(() => _selectedCountry = val),
-                onStateSelected: (val) => setState(() => _selectedState = val),
+                onStateSelected: (val) {}, // State is not currently used
                 onCitySelected: (val) => setState(() => _selectedCity = val),
               ),
               const SizedBox(height: 16),
@@ -136,30 +135,4 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     );
   }
 
-  Widget _buildDropdown({
-    required String label,
-    required IconData icon,
-    required String? value,
-    required List<String> items,
-    required void Function(String?) onChanged,
-    bool enabled = true,
-  }) {
-    return DropdownButtonFormField<String>(
-      initialValue: value,
-      items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-      onChanged: enabled ? onChanged : null,
-      validator: (val) => val == null ? 'Required' : null,
-      dropdownColor: AppColors.card,
-      style: const TextStyle(color: AppColors.textPrimary),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: AppColors.textSecondary),
-        prefixIcon: Icon(icon, color: AppColors.primary),
-        filled: true,
-        fillColor: AppColors.card.withValues(alpha: 0.5),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
-        enabled: enabled,
-      ),
-    );
-  }
 }

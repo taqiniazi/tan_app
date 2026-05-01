@@ -47,6 +47,13 @@ class ContactUsScreen extends StatelessWidget {
               'https://www.tannetwork.online',
               () => _launchUrl('https://www.tannetwork.online'),
             ),
+            _buildContactItem(
+              context,
+              Icons.privacy_tip_rounded,
+              'Privacy Policy',
+              'Read our policy',
+              () => _launchUrl('https://www.tannetwork.online/privacy'),
+            ),
             const Spacer(),
             Center(
               child: Text(

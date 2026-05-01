@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/providers/balance_provider.dart';
-import 'package:tan_network/providers/withdrawal_provider.dart';
+// import 'package:tan_network/providers/withdrawal_provider.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/crypto_text_field.dart';
 import 'package:tan_network/widgets/logout_button.dart';
@@ -28,36 +28,36 @@ class _WithdrawalScreenState extends ConsumerState<WithdrawalScreen> {
     super.dispose();
   }
 
-  void _submit() async {
-    if (_formKey.currentState!.validate()) {
-      final amount = double.parse(_amountController.text);
-      await ref.read(withdrawalProvider.notifier).submit(
-            amount,
-            _addressController.text.trim(),
-            _selectedNetwork,
-          );
-
-      final state = ref.read(withdrawalProvider);
-      if (state.success) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Withdrawal submitted successfully!'), backgroundColor: AppColors.primary),
-          );
-          Navigator.of(context).pop();
-        }
-      } else if (state.error != null) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.error!), backgroundColor: AppColors.error),
-          );
-        }
-      }
-    }
-  }
+  // void _submit() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     final amount = double.parse(_amountController.text);
+  //     await ref.read(withdrawalProvider.notifier).submit(
+  //           amount,
+  //           _addressController.text.trim(),
+  //           _selectedNetwork,
+  //         );
+  //
+  //     final state = ref.read(withdrawalProvider);
+  //     if (state.success) {
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('Withdrawal submitted successfully!'), backgroundColor: AppColors.primary),
+  //         );
+  //         Navigator.of(context).pop();
+  //       }
+  //     } else if (state.error != null) {
+  //       if (mounted) {
+  //         ScaffoldMessenger.of(context).showSnackBar(
+  //           SnackBar(content: Text(state.error!), backgroundColor: AppColors.error),
+  //         );
+  //       }
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
-    final withdrawalState = ref.watch(withdrawalProvider);
+    // final withdrawalState = ref.watch(withdrawalProvider);
     final balance = ref.watch(balanceProvider);
 
     return Scaffold(
