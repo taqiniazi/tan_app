@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/services/api_service.dart';
+import 'package:tan_network/providers/auth_provider.dart';
+import 'package:tan_network/providers/balance_provider.dart';
 
 class MiningState {
   final bool isMining;
@@ -36,19 +38,31 @@ class MiningState {
 
 class MiningNotifier extends StateNotifier<MiningState> {
   final ApiService _apiService;
+  final Ref _ref;
   Timer? _timer;
+  Timer? _pollTimer;
   static const Duration _miningDuration = Duration(hours: 24);
 
-  MiningNotifier(this._apiService) : super(MiningState()) {
+  MiningNotifier(this._apiService, this._ref) : super(MiningState()) {
     syncWithBackend();
+    _startPoller();
+  }
+
+  void _startPoller() {
+    _pollTimer?.cancel();
+    _pollTimer = Timer.periodic(const Duration(seconds: 30), (timer) {
+      syncWithBackend();
+    });
   }
 
   Future<void> syncWithBackend() async {
     try {
       final status = await _apiService.getMiningStatus();
-      final bool isMining = status['isMining'] == true || status['isMining'] == 'true';
+      final bool isMining =
+          status['isMining'] == true || status['isMining'] == 'true';
       final String? startTimeStr = status['startTime'];
-      final double rate = double.tryParse(status['rate']?.toString() ?? '0.01') ?? 0.01;
+      final double rate =
+          double.tryParse(status['rate']?.toString() ?? '0.01') ?? 0.01;
 
       if (isMining && startTimeStr != null) {
         final startTime = DateTime.parse(startTimeStr);
@@ -72,6 +86,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
             miningRate: rate,
             canClaim: true,
           );
+          _timer?.cancel();
         }
       } else {
         state = state.copyWith(
@@ -80,6 +95,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
           miningRate: rate,
           canClaim: false,
         );
+        _timer?.cancel();
       }
     } catch (e) {
       // Keep existing state or handle error
@@ -116,7 +132,12 @@ class MiningNotifier extends StateNotifier<MiningState> {
 
     try {
       await _apiService.startMining();
+      // Wait a bit for backend to process
+      await Future.delayed(const Duration(milliseconds: 500));
       await syncWithBackend();
+      // Also refresh profile and balance to ensure consistency
+      _ref.read(authProvider.notifier).fetchProfile();
+      _ref.invalidate(balanceProvider);
     } catch (e) {
       rethrow;
     }
@@ -125,7 +146,12 @@ class MiningNotifier extends StateNotifier<MiningState> {
   Future<void> claimReward() async {
     try {
       await _apiService.claimReward();
+      // Wait a bit for backend to process
+      await Future.delayed(const Duration(milliseconds: 500));
       await syncWithBackend();
+      // Refresh profile and balance
+      _ref.read(authProvider.notifier).fetchProfile();
+      _ref.invalidate(balanceProvider);
     } catch (e) {
       rethrow;
     }
@@ -134,6 +160,7 @@ class MiningNotifier extends StateNotifier<MiningState> {
   @override
   void dispose() {
     _timer?.cancel();
+    _pollTimer?.cancel();
     super.dispose();
   }
 }
@@ -141,5 +168,5 @@ class MiningNotifier extends StateNotifier<MiningState> {
 final miningProvider = StateNotifierProvider<MiningNotifier, MiningState>((
   ref,
 ) {
-  return MiningNotifier(ref.watch(apiServiceProvider));
+  return MiningNotifier(ref.watch(apiServiceProvider), ref);
 });
