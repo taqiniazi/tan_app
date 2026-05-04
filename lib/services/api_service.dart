@@ -251,6 +251,19 @@ class ApiService {
     }
   }
 
+  Future<List<UserModel>> getLeaderboard() async {
+    try {
+      final response = await _dio.get('/leaderboard');
+      if (response.data['success'] == true) {
+        final List data = response.data['data'];
+        return data.map((json) => UserModel.fromJson(json)).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   Future<void> startMining() async {
     try {
       await _dio.post('/start-mining');

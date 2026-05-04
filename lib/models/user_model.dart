@@ -9,6 +9,7 @@ class UserModel {
   final String? country;
   final String? city;
   final String? profileImage;
+  final double balance;
   final double referralEarnings;
   final double totalEarnedFromMining;
   final bool isFlagged;
@@ -24,6 +25,7 @@ class UserModel {
     this.country,
     this.city,
     this.profileImage,
+    this.balance = 0.0,
     this.referralEarnings = 0.0,
     this.totalEarnedFromMining = 0.0,
     this.isFlagged = false,
@@ -43,6 +45,7 @@ class UserModel {
       country: json['country'],
       city: json['city'],
       profileImage: json['profileImage'],
+      balance: (json['balance'] ?? 0.0).toDouble(),
       referralEarnings: (json['referralEarnings'] ?? 0.0).toDouble(),
       totalEarnedFromMining: (json['totalEarnedFromMining'] ?? 0.0).toDouble(),
       isFlagged: json['isFlagged'] ?? false,
@@ -61,6 +64,7 @@ class UserModel {
       'country': country,
       'city': city,
       'profileImage': profileImage,
+      'balance': balance,
       'referralEarnings': referralEarnings,
       'totalEarnedFromMining': totalEarnedFromMining,
       'isFlagged': isFlagged,
@@ -78,6 +82,7 @@ class UserModel {
     String? country,
     String? city,
     String? profileImage,
+    double? balance,
     double? referralEarnings,
     double? totalEarnedFromMining,
     bool? isFlagged,
@@ -93,6 +98,7 @@ class UserModel {
       country: country ?? this.country,
       city: city ?? this.city,
       profileImage: profileImage ?? this.profileImage,
+      balance: balance ?? this.balance,
       referralEarnings: referralEarnings ?? this.referralEarnings,
       totalEarnedFromMining: totalEarnedFromMining ?? this.totalEarnedFromMining,
       isFlagged: isFlagged ?? this.isFlagged,

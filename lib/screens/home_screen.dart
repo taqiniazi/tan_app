@@ -12,12 +12,39 @@ import 'package:tan_network/providers/mining_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:tan_network/widgets/logout_button.dart';
 import 'package:tan_network/widgets/premium_banner.dart';
+import 'package:tan_network/screens/leaderboard_screen.dart';
+import 'package:tan_network/widgets/premium_upgrade_modal.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkPremiumStatus();
+    });
+  }
+
+  void _checkPremiumStatus() {
+    final user = ref.read(authProvider).user;
+    if (user != null && !user.isPremium) {
+      showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        isScrollControlled: true,
+        builder: (context) => const PremiumUpgradeModal(),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final balance = ref.watch(balanceProvider);
     final user = ref.watch(authProvider).user;
     final activityAsync = ref.watch(activityProvider);
@@ -94,7 +121,7 @@ class HomeScreen extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: 32),
-            _buildSectionHeader('Recent Activity', ref),
+            _buildSectionHeader('Recent Activity'),
             const SizedBox(height: 16),
             activityAsync.when(
               data: (activities) {
@@ -169,6 +196,21 @@ class HomeScreen extends ConsumerWidget {
       children: [
         Expanded(
           child: AnimatedTap(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const LeaderboardScreen()),
+            ),
+            child: _actionButton(
+              context,
+              'Leaderboard',
+              Icons.leaderboard_rounded,
+              Colors.orangeAccent,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: AnimatedTap(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -190,7 +232,7 @@ class HomeScreen extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 12),
         Expanded(
           child: AnimatedTap(
             onTap: () => Navigator.push(
@@ -234,7 +276,7 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSectionHeader(String title, WidgetRef ref) {
+  Widget _buildSectionHeader(String title) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
