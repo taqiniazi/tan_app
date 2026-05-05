@@ -29,6 +29,8 @@ android {
         jvmTarget = "1.8"
     }
 
+    setProperty("archivesBaseName", "TAN_Network")
+
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.fivetantech.tan_network"
