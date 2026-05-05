@@ -8,7 +8,7 @@
 PRODUCT_NAME = tan_network
 
 // The application's bundle identifier
-PRODUCT_BUNDLE_IDENTIFIER = com.example.tanNetwork
+PRODUCT_BUNDLE_IDENTIFIER = com.fivetantech.tan_network
 
 // The copyright displayed in application information
-PRODUCT_COPYRIGHT = Copyright © 2026 com.example. All rights reserved.
+PRODUCT_COPYRIGHT = Copyright © 2026 com.fivetantech. All rights reserved.

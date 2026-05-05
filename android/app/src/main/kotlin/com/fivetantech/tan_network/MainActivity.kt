@@ -1,4 +1,4 @@
-package com.syntxsol.tan_network
+package com.fivetantech.tan_network
 
 import io.flutter.embedding.android.FlutterActivity
 
