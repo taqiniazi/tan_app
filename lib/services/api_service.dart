@@ -14,7 +14,7 @@ class ApiService {
 
   static const String _lastActivityKey = 'last_activity';
   static const int _inactivityTimeoutHours = 48;
-  static const String _baseUrl = 'https://tannetwork.online/tan-laravel/api';
+  static const String _baseUrl = 'https://tannetwork.online/tan-laravel/public/index.php/api';
   String get baseUrl => _baseUrl;
 
   ApiService() {
