@@ -20,17 +20,20 @@ class WithdrawalModel {
   });
 
   factory WithdrawalModel.fromJson(Map<String, dynamic> json) {
+    String statusStr = json['status'] ?? 'pending';
+    if (statusStr == 'failed') statusStr = 'rejected';
+    
     return WithdrawalModel(
-      id: json['_id'] ?? json['id'] ?? '',
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
       amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
-      address: json['walletAddress'] ?? json['address'] ?? '',
+      address: json['wallet_address'] ?? json['walletAddress'] ?? json['address'] ?? '',
       network: json['network'] ?? '',
-      date: DateTime.parse(json['createdAt'] ?? json['date'] ?? DateTime.now().toIso8601String()),
+      date: DateTime.parse(json['created_at'] ?? json['createdAt'] ?? json['date'] ?? DateTime.now().toIso8601String()),
       status: WithdrawalStatus.values.firstWhere(
-        (e) => e.name == json['status'],
+        (e) => e.name == statusStr,
         orElse: () => WithdrawalStatus.pending,
       ),
-      userId: json['userId'],
+      userId: json['user_id'] ?? json['userId'],
     );
   }
 }

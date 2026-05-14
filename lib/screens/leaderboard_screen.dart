@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/services/api_service.dart';
 import 'package:tan_network/models/user_model.dart';
 import 'package:tan_network/theme/app_theme.dart';
-import 'package:tan_network/widgets/animations.dart';
 
 class LeaderboardScreen extends ConsumerStatefulWidget {
   const LeaderboardScreen({super.key});
@@ -37,10 +36,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('LEADERBOARD'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('LEADERBOARD'), centerTitle: true),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : RefreshIndicator(
@@ -70,7 +66,7 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
   Widget _buildTop3() {
     if (_topEarners.isEmpty) return const SizedBox();
 
-    final gold = _topEarners.length > 0 ? _topEarners[0] : null;
+    final gold = _topEarners.isNotEmpty ? _topEarners[0] : null;
     final silver = _topEarners.length > 1 ? _topEarners[1] : null;
     final bronze = _topEarners.length > 2 ? _topEarners[2] : null;
 
@@ -159,7 +155,8 @@ class _LeaderboardScreenState extends ConsumerState<LeaderboardScreen> {
           CircleAvatar(
             radius: 20,
             backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-            backgroundImage: (user.profileImage != null && user.profileImage!.isNotEmpty)
+            backgroundImage:
+                (user.profileImage != null && user.profileImage!.isNotEmpty)
                 ? NetworkImage(
                     '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}',
                   )
@@ -221,18 +218,23 @@ class _PodiumItem extends StatelessWidget {
                 backgroundColor: color.withValues(alpha: 0.2),
                 child: Consumer(
                   builder: (context, ref, _) {
-                    final imageUrl = (user.profileImage != null && user.profileImage!.isNotEmpty)
+                    final imageUrl =
+                        (user.profileImage != null &&
+                            user.profileImage!.isNotEmpty)
                         ? '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}'
                         : null;
                     return CircleAvatar(
                       radius: rank == 1 ? 36 : 31,
-                      backgroundImage: imageUrl != null ? NetworkImage(imageUrl) : null,
+                      backgroundImage: imageUrl != null
+                          ? NetworkImage(imageUrl)
+                          : null,
                       child: imageUrl == null
                           ? Text(
                               user.name[0].toUpperCase(),
                               style: TextStyle(
-                                  fontSize: rank == 1 ? 24 : 20,
-                                  fontWeight: FontWeight.bold),
+                                fontSize: rank == 1 ? 24 : 20,
+                                fontWeight: FontWeight.bold,
+                              ),
                             )
                           : null,
                     );
@@ -243,8 +245,11 @@ class _PodiumItem extends StatelessWidget {
             if (rank == 1)
               const Positioned(
                 top: 0,
-                child: Icon(Icons.workspace_premium,
-                    color: Color(0xFFFFD700), size: 30),
+                child: Icon(
+                  Icons.workspace_premium,
+                  color: Color(0xFFFFD700),
+                  size: 30,
+                ),
               ),
           ],
         ),
@@ -253,10 +258,7 @@ class _PodiumItem extends StatelessWidget {
           user.name,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 14,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         ),
         const SizedBox(height: 5),
         Container(

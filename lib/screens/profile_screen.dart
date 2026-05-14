@@ -249,9 +249,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             backgroundImage: _localImage != null
                                 ? FileImage(_localImage!) as ImageProvider
                                 : (user.profileImage != null
-                                    ? NetworkImage(
-                                        '${ref.read(apiServiceProvider).baseUrl.replaceAll('/api', '')}${user.profileImage}',
-                                      )
+                                    ? (user.profileImage!.startsWith('http')
+                                        ? NetworkImage(user.profileImage!)
+                                        : NetworkImage(
+                                            '${ref.read(apiServiceProvider).baseUrl.replaceAll('/index.php/api', '')}${user.profileImage}',
+                                          ))
                                     : null),
                             child: _localImage == null && user.profileImage == null
                                 ? Text(
@@ -440,7 +442,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           _infoRow(
             Icons.security_rounded,
             'Account ID',
-            '#${user.id.substring(user.id.length - 8)}',
+            '#${user.id.length > 8 ? user.id.substring(user.id.length - 8) : user.id}',
           ),
         ],
       ),

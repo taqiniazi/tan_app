@@ -35,20 +35,20 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['id'] ?? json['_id'] ?? '',
+      id: (json['id'] ?? json['_id'] ?? '').toString(),
       name: json['name'] ?? '',
       email: json['email'] ?? '',
       role: json['role'] ?? 'user',
-      miningRate: (json['miningRate'] ?? 0.01).toDouble(),
-      isPremium: json['isPremium'] ?? false,
-      referralCode: json['referralCode'] ?? '',
+      miningRate: (json['mining_rate'] ?? json['miningRate'] ?? 0.01).toDouble(),
+      isPremium: (json['is_premium'] ?? json['isPremium'] ?? false) == true || (json['is_premium'] ?? json['isPremium'] ?? 0) == 1,
+      referralCode: json['referral_code'] ?? json['referralCode'] ?? '',
       country: json['country'],
       city: json['city'],
-      profileImage: json['profileImage'],
+      profileImage: json['profile_image'] ?? json['profileImage'],
       balance: (json['balance'] ?? 0.0).toDouble(),
-      referralEarnings: (json['referralEarnings'] ?? 0.0).toDouble(),
-      totalEarnedFromMining: (json['totalEarnedFromMining'] ?? 0.0).toDouble(),
-      isFlagged: json['isFlagged'] ?? false,
+      referralEarnings: (json['referral_earnings'] ?? json['referralEarnings'] ?? 0.0).toDouble(),
+      totalEarnedFromMining: (json['total_earned_from_mining'] ?? json['totalEarnedFromMining'] ?? 0.0).toDouble(),
+      isFlagged: (json['is_flagged'] ?? json['isFlagged'] ?? false) == true || (json['is_flagged'] ?? json['isFlagged'] ?? 0) == 1,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tan_network/admin/admin_config_screen.dart';
 import 'package:tan_network/admin/admin_dashboard.dart';
 import 'package:tan_network/admin/admin_users_list.dart';
 import 'package:tan_network/admin/admin_withdrawals_list.dart';
@@ -27,12 +28,14 @@ class _AdminLayoutState extends ConsumerState<AdminLayout> {
       const AdminDashboard(),
       const AdminUsersList(),
       const AdminWithdrawalsList(),
+      const AdminConfigScreen(),
     ];
 
     final List<Map<String, dynamic>> menuItems = [
       {'icon': Icons.dashboard_rounded, 'label': 'Dashboard'},
       {'icon': Icons.people_rounded, 'label': 'Users'},
       {'icon': Icons.account_balance_wallet_rounded, 'label': 'Withdrawals'},
+      {'icon': Icons.settings_suggest_rounded, 'label': 'Settings'},
     ];
 
     return Scaffold(

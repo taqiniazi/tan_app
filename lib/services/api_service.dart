@@ -398,6 +398,14 @@ class ApiService {
     }
   }
 
+  Future<void> updateConfig(Map<String, dynamic> config) async {
+    try {
+      await _dio.post('/admin/config/update', data: config);
+    } on DioException catch (e) {
+      throw e.message ?? 'Failed to update configuration';
+    }
+  }
+
   Future<void> logout() async {
     await _storage.delete(key: _tokenKey);
     await _storage.delete(key: _lastActivityKey);

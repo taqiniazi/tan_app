@@ -111,11 +111,11 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
     String address = 'N/A';
     if (_config != null) {
       address = (_selectedNetwork == 'SOL')
-          ? (_config!['paymentAddressSOL'] ?? 'N/A')
-          : (_config!['paymentAddressEVM'] ?? 'N/A');
+          ? (_config!['payment_address_sol'] ?? _config!['paymentAddressSOL'] ?? 'N/A')
+          : (_config!['payment_address_evm'] ?? _config!['paymentAddressEVM'] ?? 'N/A');
     }
 
-    final fee = _config?['premiumFee']?.toDouble() ?? 10.0;
+    final fee = (_config?['premium_fee'] ?? _config?['premiumFee'] ?? 10.0).toDouble();
 
     return Scaffold(
       appBar: AppBar(
