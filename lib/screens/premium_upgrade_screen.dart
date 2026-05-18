@@ -119,7 +119,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('UPGRADE TO PREMIUM'),
+        title: const Text('ANNUAL PREMIUM'),
         actions: [const AppLogoutButton(), const SizedBox(width: 8)],
       ),
       body: SingleChildScrollView(
@@ -176,7 +176,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
           const Icon(Icons.star_rounded, color: Colors.white, size: 48),
           const SizedBox(height: 16),
           const Text(
-            'LIFETIME PREMIUM',
+            'ANNUAL PREMIUM',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -185,7 +185,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            '\$$fee USDT',
+            '\$$fee USDT / Year',
             style: const TextStyle(
               color: Colors.white,
               fontSize: 32,
@@ -268,7 +268,7 @@ class _PremiumUpgradeScreenState extends ConsumerState<PremiumUpgradeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Send exactly \$10 USDT to the address below:',
+            'Send exactly \$10 USDT to the address below for 1 Year Premium:',
             style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 12),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:tan_network/providers/balance_provider.dart';
+import 'package:tan_network/models/user_model.dart';
 import 'package:tan_network/theme/app_theme.dart';
 import 'package:tan_network/widgets/balance_card.dart';
 import 'package:tan_network/widgets/mining_status_card.dart';
@@ -14,6 +15,7 @@ import 'package:tan_network/widgets/logout_button.dart';
 import 'package:tan_network/widgets/premium_banner.dart';
 import 'package:tan_network/screens/leaderboard_screen.dart';
 import 'package:tan_network/widgets/premium_upgrade_modal.dart';
+import 'package:tan_network/screens/premium_benefits_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -73,7 +75,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             FadeSlideTransition(
               duration: const Duration(milliseconds: 400),
               child: Text(
-                'Good morning, ${user?.name ?? "User"}',
+                'Hello , ${user?.name ?? "User"}',
                 style: const TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 16,
@@ -107,7 +109,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: 24),
               FadeSlideTransition(
                 duration: const Duration(milliseconds: 700),
-                child: _buildQuickActions(context),
+                child: _buildQuickActions(context, user),
               ),
               const SizedBox(height: 24),
               FadeSlideTransition(
@@ -191,7 +193,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Widget _buildQuickActions(BuildContext context) {
+  Widget _buildQuickActions(BuildContext context, UserModel? currentUser) {
     return Row(
       children: [
         Expanded(
@@ -249,6 +251,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
           ),
         ),
+        if (currentUser?.isPremium ?? false) ...[
+          const SizedBox(width: 12),
+          Expanded(
+            child: AnimatedTap(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const PremiumBenefitsScreen(),
+                ),
+              ),
+              child: _actionButton(
+                context,
+                'Premium',
+                Icons.stars_rounded,
+                Colors.purpleAccent,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

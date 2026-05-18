@@ -13,6 +13,7 @@ class UserModel {
   final double referralEarnings;
   final double totalEarnedFromMining;
   final bool isFlagged;
+  final DateTime? premiumExpiry;
 
   UserModel({
     required this.id,
@@ -29,6 +30,7 @@ class UserModel {
     this.referralEarnings = 0.0,
     this.totalEarnedFromMining = 0.0,
     this.isFlagged = false,
+    this.premiumExpiry,
   });
 
   bool get isAdmin => role == 'admin';
@@ -49,6 +51,7 @@ class UserModel {
       referralEarnings: (json['referral_earnings'] ?? json['referralEarnings'] ?? 0.0).toDouble(),
       totalEarnedFromMining: (json['total_earned_from_mining'] ?? json['totalEarnedFromMining'] ?? 0.0).toDouble(),
       isFlagged: (json['is_flagged'] ?? json['isFlagged'] ?? false) == true || (json['is_flagged'] ?? json['isFlagged'] ?? 0) == 1,
+      premiumExpiry: json['premium_expiry'] != null ? DateTime.parse(json['premium_expiry']) : null,
     );
   }
 
@@ -68,6 +71,7 @@ class UserModel {
       'referralEarnings': referralEarnings,
       'totalEarnedFromMining': totalEarnedFromMining,
       'isFlagged': isFlagged,
+      'premium_expiry': premiumExpiry?.toIso8601String(),
     };
   }
 
@@ -86,6 +90,7 @@ class UserModel {
     double? referralEarnings,
     double? totalEarnedFromMining,
     bool? isFlagged,
+    DateTime? premiumExpiry,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -102,6 +107,7 @@ class UserModel {
       referralEarnings: referralEarnings ?? this.referralEarnings,
       totalEarnedFromMining: totalEarnedFromMining ?? this.totalEarnedFromMining,
       isFlagged: isFlagged ?? this.isFlagged,
+      premiumExpiry: premiumExpiry ?? this.premiumExpiry,
     );
   }
 }
